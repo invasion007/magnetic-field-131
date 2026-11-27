@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13.1 磁场 磁感线 · 可交互课件</title>
+<style>
+  /* C 基调 · 白底（风格与技术路线.md v4.0） */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC","WenQuanYi Zen Hei",sans-serif;
+    background:linear-gradient(135deg,#f5f7fa 0%,#e4edf9 100%);
+    color:#333;overflow:hidden;
+  }
+  .app{display:grid;grid-template-rows:auto auto 1fr auto;height:100vh;padding:8px 12px 10px;gap:7px}
+  header{background:rgba(255,255,255,.95);border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);padding:8px 16px;display:flex;align-items:center;
+    gap:12px;flex-wrap:nowrap;height:44px;overflow:hidden}
+  header h1{font-size:1rem;color:#2c3e50;font-weight:600;white-space:nowrap}
+  .act{font-size:.74rem;color:#3498db;background:#eef5fd;border:1px solid #d7e5f7;
+    border-radius:20px;padding:2px 10px;white-space:nowrap}
+  .steptitle{font-size:.88rem;color:#37474f;font-weight:600;flex:1 1 auto;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .stepsn{flex:0 0 auto;margin-left:auto;font-size:.8rem;color:#90a4ae;
+    font-variant-numeric:tabular-nums}
+  .topnav{display:flex;align-items:center;gap:4px;padding:5px 10px;overflow-x:auto;
+    background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .topnav button{flex:0 0 auto;min-width:26px;height:22px;padding:0 7px;display:inline-flex;
+    align-items:center;justify-content:center;font-family:inherit;font-size:.75rem;
+    font-variant-numeric:tabular-nums;color:#546e7a;background:#f8fafd;border:1px solid #e0e7ef;
+    border-radius:6px;cursor:pointer}
+  .topnav button:hover{border-color:#3498db;background:#f1f7ff}
+  .topnav button.on{background:#3498db;border-color:#3498db;color:#fff;font-weight:700}
+  .topnav .gap{flex:0 0 auto;width:6px;height:14px;border-left:1px dashed #dde2e9;margin:0 3px}
+  .stage{display:grid;grid-template-columns:1fr 306px;gap:7px;min-height:0}
+  @media (min-width:1500px){.stage{grid-template-columns:1fr 344px}}
+  .canvaswrap{position:relative;min-width:0;min-height:0;padding:5px;background:#fff;
+    border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,.08)}
+  canvas{display:block;border-radius:10px;background:#fff;cursor:default}
+  canvas.grab{cursor:grab}
+  canvas.grabbing{cursor:grabbing}
+  aside{background:#fff;border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,.08);
+    padding:12px 14px;overflow-y:auto;min-height:0}
+  aside h3{font-size:.86rem;color:#546e7a;margin:0 0 8px;font-weight:700;letter-spacing:.3px}
+  aside .row{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:6px 0;border-bottom:1px solid #eef2f7}
+  aside .row span{font-size:.78rem;color:#78909c}
+  aside .row b{font-family:"Courier New",monospace;font-size:.9rem;color:#297fb8;
+    font-variant-numeric:tabular-nums}
+  aside .row b.gold{color:#e67e22}
+  aside .row b.warn{color:#c0392b}
+  aside table.mini{width:100%;border-collapse:collapse;margin-top:8px;font-size:.72rem;color:#546e7a}
+  aside table.mini th,aside table.mini td{border:1px solid #eef2f7;padding:3px 4px;text-align:center}
+  aside table.mini th{background:#f8fafd;color:#78909c;font-weight:600}
+  aside table.mini tr.on td{background:#eef5fd;color:#1565c0;font-weight:700}
+  aside .nte{margin-top:12px;background:#eef5fd;border:1px solid #d7e5f7;border-radius:10px;
+    padding:10px 12px}
+  aside .nte h4{font-size:.78rem;color:#1565c0;font-weight:700;margin-bottom:5px}
+  aside .nte p{font-size:.8rem;color:#546e7a;line-height:1.65}
+  footer{background:rgba(255,255,255,.95);border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.08);
+    padding:8px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+  .hint{flex:1 1 240px;min-width:120px;font-size:.85rem;color:#546e7a;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ctl{display:flex;align-items:center;gap:7px;flex:0 0 auto;background:#f8fafd;
+    border:1px solid #e0e7ef;border-radius:9px;padding:4px 9px}
+  .ctl.off{display:none}
+  .ctl label{font-size:.74rem;color:#78909c;white-space:nowrap}
+  .ctl .v{font-family:"Courier New",monospace;font-size:.92rem;font-weight:700;color:#e67e22;
+    min-width:46px;text-align:right;font-variant-numeric:tabular-nums}
+  .ctl .v i{font-size:.68rem;color:#90a4ae;font-style:normal;margin-left:2px}
+  .seg{display:flex;gap:3px}
+  .seg button{font-family:inherit;font-size:.74rem;color:#546e7a;background:#fff;
+    border:1px solid #dde2e9;border-radius:6px;padding:3px 8px;cursor:pointer;white-space:nowrap}
+  .seg button:hover{border-color:#3498db;color:#297fb8}
+  .seg button.on{background:#3498db;border-color:#3498db;color:#fff;font-weight:700}
+  input[type=range]{width:150px;height:5px;-webkit-appearance:none;appearance:none;
+    background:#dde2e9;border-radius:3px;outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;
+    border-radius:50%;background:#3498db;border:3px solid #fff;
+    box-shadow:0 0 0 1px #3498db;cursor:pointer}
+  button.pri{font-family:inherit;font-size:.82rem;font-weight:600;color:#fff;background:#3498db;
+    border:1px solid #3498db;border-radius:9px;padding:8px 16px;white-space:nowrap;cursor:pointer}
+  button.pri:hover{background:#2980b9}
+  button.ghost{font-family:inherit;font-size:.82rem;color:#546e7a;background:#f8fafd;
+    border:1px solid #e0e7ef;border-radius:9px;padding:8px 14px;white-space:nowrap;cursor:pointer}
+  button.ghost:hover{background:#f1f7ff;border-color:#3498db}
+@media (max-width:980px){
+  .stage{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+  aside{max-height:30vh;padding:9px 12px}
+  aside .row{padding:4px 0}
+  aside .nte{margin-top:8px;padding:8px 10px}
+  aside .nte p{font-size:.74rem;line-height:1.5}
+  header{padding:6px 10px;gap:8px;height:40px}
+  header h1{font-size:.84rem}
+  footer{padding:6px 10px;gap:6px}
+  .hint{flex:1 1 100%;white-space:normal;font-size:.76rem;line-height:1.35}
+  input[type=range]{width:110px}
+  .ctl{padding:3px 7px}
+  button.pri,button.ghost{padding:6px 11px;font-size:.76rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>13.1 磁场 磁感线</h1>
+    <span class="act" id="actName">第 1 幕</span>
+    <span class="steptitle" id="stepTitle">—</span>
+    <span class="stepsn" id="cnt">1 / 15</span>
+  </header>
+  <nav class="topnav" id="toc"></nav>
+  <div class="stage">
+    <div class="canvaswrap"><canvas id="cv"></canvas></div>
+    <aside>
+      <h3>读数</h3>
+      <div id="railbody"></div>
+      <div class="nte">
+        <h4>为什么这样画</h4>
+        <p id="note">—</p>
+      </div>
+    </aside>
+  </div>
+  <footer>
+    <div class="hint" id="hint">—</div>
+    <div id="ctrls" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    <button class="ghost" id="btnPrev">◀ 上一步</button>
+    <button class="pri" id="btnNext">下一步 ▶</button>
+  </footer>
+</div>
+<script>
+(function (global) {
+  'use strict';
+
+  var PI = Math.PI;
+
+  function add(a, b) { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; }
+  function sub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+  function mul(a, k) { return [a[0] * k, a[1] * k, a[2] * k]; }
+  function dot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+  function cross(a, b) {
+    return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  }
+  function len(a) { return Math.sqrt(dot(a, a)); }
+  function unit(a) { var L = len(a) || 1; return [a[0] / L, a[1] / L, a[2] / L]; }
+
+  function wireB(p, o, d, I) {
+    var r = sub(p, o);
+    var s = dot(r, d);
+    var rp = sub(r, mul(d, s));
+    var rho = len(rp);
+    if (rho < 1e-6) return [0, 0, 0];
+    return mul(cross(d, mul(rp, 1 / rho)), 2 * I / rho);
+  }
+
+  function wireFiniteB(p, o, d, half, I) {
+    var r = sub(p, o);
+    var s = dot(r, d);
+    var rp = sub(r, mul(d, s));
+    var rho = len(rp);
+    if (rho < 1e-7) return [0, 0, 0];
+    var a = s + half, b = half - s;
+    var s1 = a / Math.hypot(rho, a), s2 = b / Math.hypot(rho, b);
+    var k = (s1 + s2) * I / rho;
+    return mul(cross(d, mul(rp, 1 / rho)), k);
+  }
+
+  function loopSegs(R, cy, n) {
+    var m = new Float64Array(n * 3), d = new Float64Array(n * 3);
+    for (var i = 0; i < n; i++) {
+      var t0 = 2 * PI * i / n, t1 = 2 * PI * (i + 1) / n;
+      var x0 = R * Math.cos(t0), z0 = -R * Math.sin(t0);
+      var x1 = R * Math.cos(t1), z1 = -R * Math.sin(t1);
+      m[3 * i] = (x0 + x1) / 2; m[3 * i + 1] = cy; m[3 * i + 2] = (z0 + z1) / 2;
+      d[3 * i] = x1 - x0; d[3 * i + 1] = 0; d[3 * i + 2] = z1 - z0;
+    }
+    return { n: n, m: m, d: d };
+  }
+
+  function coilSegs(N, R, L, cy, per, pitch) {
+    var total = N * per;
+    var m = new Float64Array(total * 3), d = new Float64Array(total * 3);
+    var k = 0;
+    for (var j = 0; j < N; j++) {
+      var y = N === 1 ? cy : (pitch ? cy + (j - (N - 1) / 2) * pitch : cy - L / 2 + L * j / (N - 1));
+      for (var i = 0; i < per; i++) {
+        var t0 = 2 * PI * i / per, t1 = 2 * PI * (i + 1) / per;
+        var x0 = R * Math.cos(t0), z0 = -R * Math.sin(t0);
+        var x1 = R * Math.cos(t1), z1 = -R * Math.sin(t1);
+        m[3 * k] = (x0 + x1) / 2; m[3 * k + 1] = y; m[3 * k + 2] = (z0 + z1) / 2;
+        d[3 * k] = x1 - x0; d[3 * k + 1] = 0; d[3 * k + 2] = z1 - z0;
+        k++;
+      }
+    }
+    return { n: total, m: m, d: d };
+  }
+
+  function segB(segs, p, I) {
+    var mx = segs.m, dd = segs.d, n = segs.n;
+    var px = p[0], py = p[1], pz = p[2];
+    var bx = 0, by = 0, bz = 0;
+    for (var i = 0; i < n; i++) {
+      var i3 = 3 * i;
+      var rx = px - mx[i3], ry = py - mx[i3 + 1], rz = pz - mx[i3 + 2];
+      var r2 = rx * rx + ry * ry + rz * rz;
+      if (r2 < 1e-10) continue;
+      var inv = 1 / Math.sqrt(r2), inv3 = inv * inv * inv;
+      var ax = dd[i3], ay = dd[i3 + 1], az = dd[i3 + 2];
+      bx += (ay * rz - az * ry) * inv3;
+      by += (az * rx - ax * rz) * inv3;
+      bz += (ax * ry - ay * rx) * inv3;
+    }
+    return [bx * I, by * I, bz * I];
+  }
+
+  function polesB(p, poles) {
+    var bx = 0, by = 0, bz = 0;
+    for (var i = 0; i < poles.length; i++) {
+      var q = poles[i];
+      var rx = p[0] - q.p[0], ry = p[1] - q.p[1], rz = p[2] - q.p[2];
+      var r2 = rx * rx + ry * ry + rz * rz;
+      if (r2 < 1e-8) continue;
+      var k = q.q / (r2 * Math.sqrt(r2));
+      bx += rx * k; by += ry * k; bz += rz * k;
+    }
+    return [bx, by, bz];
+  }
+
+  function barPoles(a) {
+    return [{ p: [a, 0, 0], q: 1 }, { p: [-a, 0, 0], q: -1 }];
+  }
+
+  function pairPoles(a, d, kind) {
+
+    var lf = -2 * a - d, lr = -d, rl = d, rr = 2 * a + d;
+    var p = [{ p: [lf, 0, 0], q: -1 }, { p: [lr, 0, 0], q: 1 }];
+    if (kind === 'same') p.push({ p: [rl, 0, 0], q: 1 }, { p: [rr, 0, 0], q: -1 });
+    else p.push({ p: [rl, 0, 0], q: -1 }, { p: [rr, 0, 0], q: 1 });
+    return p;
+  }
+
+  function trace2D(f, x0, y0, h, maxSteps, bound, stop) {
+    var pts = [[x0, y0]], x = x0, y = y0, i;
+    for (i = 0; i < maxSteps; i++) {
+      var b = f(x, y), n = Math.hypot(b[0], b[1]);
+      if (!(n > 1e-12)) break;
+      var k1x = b[0] / n, k1y = b[1] / n;
+      b = f(x + h * 0.5 * k1x, y + h * 0.5 * k1y); n = Math.hypot(b[0], b[1]);
+      if (!(n > 1e-12)) break;
+      var k2x = b[0] / n, k2y = b[1] / n;
+      b = f(x + h * 0.5 * k2x, y + h * 0.5 * k2y); n = Math.hypot(b[0], b[1]);
+      if (!(n > 1e-12)) break;
+      var k3x = b[0] / n, k3y = b[1] / n;
+      b = f(x + h * k3x, y + h * k3y); n = Math.hypot(b[0], b[1]);
+      if (!(n > 1e-12)) break;
+      var k4x = b[0] / n, k4y = b[1] / n;
+      x += h * (k1x + 2 * k2x + 2 * k3x + k4x) / 6;
+      y += h * (k1y + 2 * k2y + 2 * k3y + k4y) / 6;
+      pts.push([x, y]);
+      if (stop && stop(x, y)) break;
+      if (Math.abs(x) > bound || Math.abs(y) > bound) break;
+      if (i > 30 && Math.hypot(x - x0, y - y0) < h * 1.25) { pts.push([x0, y0]); break; }
+    }
+    return pts;
+  }
+
+  function traceBoth(f, x0, y0, h, maxSteps, bound, stop) {
+    var fwd = trace2D(f, x0, y0, h, maxSteps, bound, stop);
+    var neg = function (x, y) { var b = f(x, y); return [-b[0], -b[1]]; };
+    var bwd = trace2D(neg, x0, y0, h, maxSteps, bound, stop);
+    var out = [];
+    for (var i = bwd.length - 1; i >= 0; i--) out.push(bwd[i]);
+    for (var j = 1; j < fwd.length; j++) out.push(fwd[j]);
+    return out;
+  }
+
+  function planeF(fn) {
+    return function (x, y) { var b = fn([x, y, 0]); return [b[0], b[1]]; };
+  }
+
+  function revolveX(pts, az, off) {
+    var out = [];
+    off = off == null ? 0.5 : off;
+    for (var a = 0; a < az; a++) {
+      var ph = 2 * PI * (a + off) / az, c = Math.cos(ph), s = Math.sin(ph), line = [];
+      for (var i = 0; i < pts.length; i++) line.push([pts[i][0], pts[i][1] * c, pts[i][1] * s]);
+      out.push(line);
+    }
+    return out;
+  }
+
+  function revolveY(pts, az, off) {
+    var out = [];
+    off = off == null ? 0.5 : off;
+    for (var a = 0; a < az; a++) {
+      var ph = 2 * PI * (a + off) / az, c = Math.cos(ph), s = Math.sin(ph), line = [];
+      for (var i = 0; i < pts.length; i++) line.push([pts[i][0] * c, pts[i][1], pts[i][0] * s]);
+      out.push(line);
+    }
+    return out;
+  }
+
+  function revolveAllX(lines, az, off) {
+    var out = [];
+    for (var i = 0; i < lines.length; i++) out = out.concat(revolveX(lines[i], az, off));
+    return out;
+  }
+  function revolveAllY(lines, az, off) {
+    var out = [];
+    for (var i = 0; i < lines.length; i++) out = out.concat(revolveY(lines[i], az, off));
+    return out;
+  }
+
+  function barLines(a, opt) {
+    opt = opt || {};
+    var bound = opt.bound || 7.5, az = opt.az || 8;
+    var f = planeF(function (p) { return polesB(p, barPoles(a)); });
+    var angles = opt.angles || [70, 80, 88];
+    var out = [];
+    for (var i = 0; i < angles.length; i++) {
+      var ph = angles[i] * PI / 180, r0 = a * 0.05;
+      var x0 = a + r0 * Math.cos(ph), y0 = r0 * Math.sin(ph);
+      var pts = trace2D(f, x0, y0, 0.012 * a, 4000, bound, function (x, y) {
+        return Math.hypot(x + a, y) < a * 0.12;
+      });
+      out.push(pts);
+    }
+    return out;
+  }
+
+  function wireRings(I, heights, radii, seg) {
+    var out = [];
+    for (var h = 0; h < heights.length; h++) {
+      for (var r = 0; r < radii.length; r++) {
+        var R = radii[r], ring = [];
+        for (var i = 0; i <= seg; i++) {
+          var t = 2 * PI * i / seg * (I > 0 ? 1 : -1);
+          ring.push([R * Math.cos(t), heights[h], -R * Math.sin(t)]);
+        }
+        out.push(ring);
+      }
+    }
+    return out;
+  }
+
+  function coilLines(N, R, L, I, opt) {
+    opt = opt || {};
+    var per = opt.per || 28, az = opt.az || 6, h = opt.h || 0.02;
+    var segs = coilSegs(N, R, L, 0, per, opt.pitch);
+    var sgn = I > 0 ? 1 : -1;
+    var f = function (x, y) {
+      var b = segB(segs, [x, y, 0], sgn);
+      return [b[0], b[1]];
+    };
+    var seeds = opt.seeds;
+    if (!seeds) {
+      seeds = N === 1 ? [0.16, 0.42, 0.66, 0.88, 1.22, 1.7, 2.4] : [0.14, 0.34, 0.52, 0.7];
+      if (N > 1) seeds = seeds.map(function (v) { return v * R; });
+      else seeds = seeds.map(function (v) { return v * R; });
+    }
+    var out = [];
+    for (var i = 0; i < seeds.length; i++) {
+      var pts = trace2D(f, seeds[i], 0, h, opt.steps || 2600, opt.bound || (L > 0 ? L : R) * 2.6 + 2.2);
+      out.push(pts);
+    }
+    return out;
+  }
+
+  function needleDir(B) {
+    var hx = B[0], hz = B[2];
+    var L = Math.hypot(hx, hz);
+    if (L < 1e-9) return [0, 0, -1];
+    return [hx / L, 0, hz / L];
+  }
+
+  function oersted(above, dir) {
+
+    var y = above ? 0.55 : -0.55;
+    var B = wireB([0, 0, 0], [0, y, 0], [0, 0, 1], dir);
+    return B;
+  }
+
+  function runSelfTest() {
+    var cases = 0, fails = [], m = {};
+    function ok(cond, msg) { cases++; if (!cond) fails.push(msg); }
+    function near(a, b, tol, msg) {
+      cases++;
+      var e = Math.abs(a - b) / (Math.abs(b) || 1);
+      if (!(e <= tol)) fails.push(msg + ' (err=' + e.toExponential(2) + ')');
+      return e;
+    }
+
+    var b1 = wireB([0.5, 1.2, 0.3], [0, 0, 0], [0, 1, 0], 1);
+    var b2 = wireB([1.0, 1.2, 0.6], [0, 0, 0], [0, 1, 0], 1);
+    var r1 = len(sub([0.5, 1.2, 0.3], [0, 1.2, 0])), r2 = len(sub([1.0, 1.2, 0.6], [0, 1.2, 0]));
+    near(len(b1) * r1, len(b2) * r2, 1e-9, '直线电流 |B|·rho 常数');
+    m.wireInv = len(b1) * r1;
+
+    var bx = wireB([1, 0, 0], [0, 0, 0], [0, 1, 0], 1);
+    ok(bx[2] < -0.99 && Math.abs(bx[0]) < 1e-9, '直线电流右手方向 (+x 处应为 -z)');
+
+    var ax = wireB([0, 2.4, 0], [0, 1.2, 0], [0, 1, 0], 1);
+    ok(len(ax) < 1e-12, '延长线上 B = 0');
+    m.axisZero = len(ax);
+
+    var fw = wireFiniteB([0, 0, 3.2], [0, 0, 0], [0, 0, 1], 3, 1);
+    ok(len(fw) < 1e-12, '有限长导线：延长线上 B = 0');
+
+    var fw2 = wireFiniteB([0.4, 0, 0], [0, 0, 0], [0, 0, 1], 60, 1);
+    near(len(fw2) * 0.4, 2, 2e-3, '长导线中段回到 2I/rho（无限长极限）');
+    m.finite = len(fw2);
+
+    var R = 1, maxe = 0;
+    var segs = loopSegs(R, 0, 90);
+    [0, 0.5, 1, 2, 3].forEach(function (hgt) {
+      var B = segB(segs, [0, hgt, 0], 1);
+      var ana = 2 * PI * R * R / Math.pow(R * R + hgt * hgt, 1.5);
+      maxe = Math.max(maxe, Math.abs(B[1] - ana) / ana);
+      ok(B[1] > 0, '环形电流轴线上 B 沿 +y (h=' + hgt + ')');
+    });
+    ok(maxe < 5e-3, '环形电流轴线与解析式一致');
+    m.loopAxisErr = maxe;
+
+    var Bp = segB(segs, [0, 0.7, 0], 1), Bn = segB(segs, [0, 0.7, 0], -1);
+    near(Bp[1] / Bn[1], -1, 1e-9, '电流反向 B 反向');
+
+    var cs = coilSegs(128, 0.5, 16, 0, 24);
+    var Bc = segB(cs, [0, 0, 0], 1);
+    var ideal = 4 * PI * 128 / 16;
+    var es = Math.abs(Bc[1] - ideal) / ideal;
+    ok(es < 0.02, '长螺线管中心 B ≈ mu0 n I');
+    m.solenoidErr = es;
+
+    var L1 = 2 * R;
+    var B20 = segB(coilSegs(20, R, L1, 0, 36), [0, 0, 0], 1);
+    var B60 = segB(coilSegs(60, R, L1, 0, 36), [0, 0, 0], 1);
+    near(B60[1] / B20[1], 3, 0.05, 'N 匝中心 B ∝ N（微元累积）');
+    m.accumRatio = B60[1] / B20[1];
+
+    var bp = barPoles(1);
+    ok(polesB([2.4, 0, 0], bp)[0] > 0, 'N 极外侧 B 沿 +x');
+    ok(polesB([0, 0.9, 0], bp)[0] < 0, '赤道处 B 由 N 指向 S');
+
+    var bpole = len(polesB([1.25, 0, 0], bp)), bside = len(polesB([0, 1.25, 0], bp));
+    ok(bpole / bside > 2, '极面比赤道强 2 倍以上');
+    m.densityRatio = bpole / bside;
+
+    var same = pairPoles(0.7, 0.55, 'same');
+    var opp = pairPoles(0.7, 0.55, 'opp');
+    var bsame = len(polesB([0, 0, 0], same));
+    var bopp = len(polesB([0, 0, 0], opp));
+    ok(bsame < 1e-9, '同名磁极中点 B = 0');
+    ok(bopp > 0.5, '异名磁极中点 B 明显不为 0');
+    m.neutral = bsame;
+
+    var lines = barLines(1, { az: 1 });
+    var okEnds = true, gap = 0;
+    for (var i = 0; i < lines.length; i++) {
+      var p0 = lines[i][0], p1 = lines[i][lines[i].length - 1];
+      if (Math.hypot(p0[0] - 1, p0[1]) > 0.2) okEnds = false;
+      if (Math.hypot(p1[0] + 1, p1[1]) > 0.2) okEnds = false;
+      gap = Math.max(gap, Math.hypot(p0[0] - 1, p0[1]) + Math.hypot(p1[0] + 1, p1[1]));
+    }
+    ok(okEnds, '磁感线从 N 极面出发、回到 S 极面');
+    m.ends = gap;
+
+    var c1 = needleDir(oersted(true, 1))[0];
+    var c2 = needleDir(oersted(true, -1))[0];
+    var c3 = needleDir(oersted(false, 1))[0];
+    var c4 = needleDir(oersted(false, -1))[0];
+    ok(c1 > 0.99 && c2 < -0.99 && c3 < -0.99 && c4 > 0.99, '奥斯特四情形符号');
+
+    near(c1, -c3, 1e-9, '上下互换等价于电流反向');
+    m.oersted = [c1, c2, c3, c4];
+
+    var Bq = polesB([0.8, 0.4, 0], bp);
+    var nd = needleDir(Bq);
+    near(Math.hypot(nd[0], nd[2]), 1, 1e-12, '磁针方向为单位向量');
+
+    return { pass: fails.length === 0, cases: cases, fails: fails, metrics: m };
+  }
+
+  global.PHY = {
+    V: { add: add, sub: sub, mul: mul, dot: dot, cross: cross, len: len, unit: unit },
+    wireB: wireB, wireFiniteB: wireFiniteB, loopSegs: loopSegs, coilSegs: coilSegs, segB: segB,
+    polesB: polesB, barPoles: barPoles, pairPoles: pairPoles,
+    trace2D: trace2D, traceBoth: traceBoth, planeF: planeF, revolveX: revolveX, revolveY: revolveY,
+    revolveAllX: revolveAllX, revolveAllY: revolveAllY,
+    barLines: barLines, wireRings: wireRings, coilLines: coilLines,
+    needleDir: needleDir, oersted: oersted,
+    runSelfTest: runSelfTest
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+if (typeof module !== 'undefined' && module.exports) module.exports = global.PHY || module.exports;</script>
+<script>
+(function (global) {
+  'use strict';
+
+  var PAL = {
+    ink: '#2c3e50', sub: '#546e7a', mute: '#90a4ae', faint: '#94a6b8',
+    edge: '#dde2e9', grid: '#e6edf5', panel: '#f8fafd', panelEdge: '#e0e7ef',
+    blue: '#3498db', deep: '#297fb8', red: '#c0392b', orange: '#e67e22',
+    green: '#27ae60', navy: '#1565c0', tintR: '#fdeaea', tintB: '#e8f2fa',
+    tintO: '#fdf1e6'
+  };
+
+  var ctx = null, cam = null, W = 1, H = 1;
+
+  function makeCam(o) {
+    o = o || {};
+    var c = { yaw: o.yaw || 0, pitch: o.pitch || 0, s: o.s || 100, cx: o.cx || 0, cy: o.cy || 0 };
+    return c;
+  }
+
+  function raw(p) {
+    var cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+    var x1 = p[0] * cy + p[2] * sy;
+    var z1 = -p[0] * sy + p[2] * cy;
+    var cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+    var y2 = p[1] * cp - z1 * sp;
+    var z2 = p[1] * sp + z1 * cp;
+    return [x1, y2, z2];
+  }
+
+  function project(p) {
+    var q = raw(p);
+    return [cam.cx + q[0] * cam.s, cam.cy - q[1] * cam.s, q[2]];
+  }
+
+  function fitCam(w, h, o, box) {
+    var c = makeCam(o);
+    cam = c; c.s = 1; c.cx = 0; c.cy = 0; W = w; H = h;
+    var xs = [box[0], box[1]], ys = [box[2], box[3]], zs = [box[4], box[5]];
+    var minx = 1e9, maxx = -1e9, miny = 1e9, maxy = -1e9;
+    for (var i = 0; i < 2; i++) for (var j = 0; j < 2; j++) for (var k = 0; k < 2; k++) {
+      var q = raw([xs[i], ys[j], zs[k]]);
+      if (q[0] < minx) minx = q[0]; if (q[0] > maxx) maxx = q[0];
+      if (q[1] < miny) miny = q[1]; if (q[1] > maxy) maxy = q[1];
+    }
+    var sw = Math.max(1e-6, maxx - minx), sh = Math.max(1e-6, maxy - miny);
+    c.s = Math.min(w * (o.mx || 0.86) / sw, h * (o.my || 0.82) / sh);
+    c.cx = w / 2 - c.s * (minx + maxx) / 2;
+    c.cy = h / 2 + c.s * (miny + maxy) / 2;
+    return c;
+  }
+
+  function begin(c) { ctx = c.ctx; cam = c.cam; W = c.w; H = c.h; }
+
+  function strokeStyle(c) { if (c) ctx.strokeStyle = c; }
+
+  function line(a, b, o) {
+    o = o || {};
+    var p = project(a), q = project(b);
+    ctx.save();
+    ctx.strokeStyle = o.color || PAL.sub;
+    ctx.lineWidth = o.w || 1.6;
+    ctx.lineCap = 'round';
+    if (o.dash) ctx.setLineDash(o.dash);
+    if (o.alpha != null) ctx.globalAlpha = o.alpha;
+    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+    ctx.restore();
+  }
+
+  function poly(pts, o) {
+    if (!pts || pts.length < 2) return;
+    o = o || {};
+    ctx.save();
+    ctx.strokeStyle = o.color || PAL.blue;
+    ctx.lineWidth = o.w || 1.8;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    if (o.dash) ctx.setLineDash(o.dash);
+    if (o.alpha != null) ctx.globalAlpha = o.alpha;
+    ctx.beginPath();
+    for (var i = 0; i < pts.length; i++) {
+      var p = project(pts[i]);
+      if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function head(a, b, size, color) {
+    var p = project(a), q = project(b);
+    var dx = q[0] - p[0], dy = q[1] - p[1];
+    var L = Math.hypot(dx, dy) || 1;
+    dx /= L; dy /= L;
+    size = size || 7;
+    var bx = q[0] - dx * size, by = q[1] - dy * size;
+    var nx = -dy, ny = dx;
+    ctx.save();
+    ctx.fillStyle = color || PAL.blue;
+    ctx.beginPath();
+    ctx.moveTo(q[0], q[1]);
+    ctx.lineTo(bx + nx * size * 0.5, by + ny * size * 0.5);
+    ctx.lineTo(bx - nx * size * 0.5, by - ny * size * 0.5);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function arrow(a, b, o) {
+    o = o || {};
+    line(a, b, o);
+    var mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2];
+    head(o.tail ? mid : a, b, o.head || 7, o.color || PAL.blue);
+  }
+
+  function dot(p, r, color, ring) {
+    var q = project(p);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(q[0], q[1], r || 4, 0, Math.PI * 2);
+    ctx.fillStyle = color || PAL.blue; ctx.fill();
+    if (ring) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke(); }
+    ctx.restore();
+  }
+
+  function text(p, s, o) {
+    o = o || {};
+    var q = project(p);
+    ctx.save();
+    ctx.font = (o.weight || 400) + ' ' + (o.size || 12.5) + 'px "Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif';
+    ctx.textAlign = o.align || 'left';
+    ctx.textBaseline = o.base || 'middle';
+    var x = q[0] + (o.dx || 0), y = q[1] + (o.dy || 0);
+    if (o.halo !== false) {
+      ctx.lineWidth = 3.2; ctx.strokeStyle = 'rgba(255,255,255,.92)';
+      ctx.lineJoin = 'round';
+      ctx.strokeText(s, x, y);
+    }
+    ctx.fillStyle = o.color || PAL.ink;
+    ctx.fillText(s, x, y);
+    ctx.restore();
+  }
+
+  function box(x0, x1, y0, y1, z0, z1, o) {
+    o = o || {};
+    var faces = [
+      { n: [0, 0, 1], p: [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], c: o.front || o.color },
+      { n: [0, 0, -1], p: [[x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0]], c: o.back || o.color },
+      { n: [1, 0, 0], p: [[x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1]], c: o.right || o.color },
+      { n: [-1, 0, 0], p: [[x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0]], c: o.left || o.color },
+      { n: [0, 1, 0], p: [[x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0]], c: o.top || o.color },
+      { n: [0, -1, 0], p: [[x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1]], c: o.bottom || o.color }
+    ];
+    var arr = faces.map(function (f) {
+      var z = 0;
+      for (var i = 0; i < 4; i++) z += project(f.p[i])[2];
+      return { f: f, z: z / 4 };
+    }).sort(function (a, b) { return a.z - b.z; });
+    for (var i = 0; i < arr.length; i++) {
+      var f = arr[i].f;
+      ctx.save();
+      if (o.alpha != null) ctx.globalAlpha = o.alpha;
+      ctx.beginPath();
+      for (var j = 0; j < 4; j++) {
+        var q = project(f.p[j]);
+        if (j === 0) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]);
+      }
+      ctx.closePath();
+      ctx.fillStyle = f.c || PAL.blue; ctx.fill();
+      if (o.edge !== false) { ctx.lineWidth = 1.1; ctx.strokeStyle = o.edgeColor || '#ffffff'; ctx.stroke(); }
+      ctx.restore();
+    }
+  }
+
+  function disc(center, axis, R, o) {
+
+    o = o || {};
+    var n = o.seg || 46, pts = [];
+    for (var i = 0; i <= n; i++) {
+      var t = 2 * Math.PI * i / n;
+      if (axis === 'y') pts.push([center[0] + R * Math.cos(t), center[1], center[2] + R * Math.sin(t)]);
+      else if (axis === 'x') pts.push([center[0], center[1] + R * Math.cos(t), center[2] + R * Math.sin(t)]);
+      else pts.push([center[0] + R * Math.cos(t), center[1] + R * Math.sin(t), center[2]]);
+    }
+    ctx.save();
+    ctx.beginPath();
+    for (var k = 0; k < pts.length; k++) { var q = project(pts[k]); if (k === 0) ctx.moveTo(q[0], q[1]); else ctx.lineTo(q[0], q[1]); }
+    ctx.closePath();
+    if (o.fill) { ctx.globalAlpha = o.alpha == null ? 1 : o.alpha; ctx.fillStyle = o.fill; ctx.fill(); ctx.globalAlpha = 1; }
+    if (o.color) { ctx.strokeStyle = o.color; ctx.lineWidth = o.w || 1.6; if (o.dash) ctx.setLineDash(o.dash); ctx.stroke(); }
+    ctx.restore();
+  }
+
+  function wire(a, b, o) {
+    o = o || {};
+    var w = o.w || 7;
+    line(a, b, { color: o.dark || '#94a6b8', w: w });
+    line(a, b, { color: o.mid || '#dde2e9', w: Math.max(2, w - 2.4) });
+    line(a, b, { color: '#ffffff', w: Math.max(1, w - 5), alpha: 0.75 });
+  }
+
+  function helix(y0, y1, R, turns, o) {
+    o = o || {};
+    var per = o.per || 26, pts = [];
+    for (var i = 0; i <= turns * per; i++) {
+      var t = i / per * 2 * Math.PI, f = i / (turns * per);
+      pts.push([R * Math.cos(t), y0 + (y1 - y0) * f, -R * Math.sin(t)]);
+    }
+    poly(pts, { color: o.color || '#297fb8', w: o.w || 3.4, alpha: o.alpha });
+    return pts;
+  }
+
+  function needle(center, dir, len, o) {
+    o = o || {};
+    var u = dir;
+    var a = [center[0] - u[0] * len / 2, center[1] - u[1] * len / 2, center[2] - u[2] * len / 2];
+    var b = [center[0] + u[0] * len / 2, center[1] + u[1] * len / 2, center[2] + u[2] * len / 2];
+    var mid = [center[0], center[1], center[2]];
+    line(a, mid, { color: o.sColor || PAL.deep, w: o.w || 4.6 });
+    line(mid, b, { color: o.nColor || PAL.red, w: o.w || 4.6 });
+    line(a, mid, { color: '#ffffff', w: 1.2, alpha: 0.6 });
+    line(mid, b, { color: '#ffffff', w: 1.2, alpha: 0.45 });
+    head(mid, b, o.head || 9, o.nColor || PAL.red);
+    dot(center, o.pivot || 3.4, '#ffffff', false);
+    dot(center, (o.pivot || 3.4) - 1.6, PAL.ink, false);
+  }
+
+  function ringArrow(center, axis, R, o) {
+
+    o = o || {};
+    var a0 = o.a0 == null ? 0 : o.a0, a1 = o.a1 == null ? Math.PI * 1.55 : o.a1;
+    var n = 40, pts = [];
+    for (var i = 0; i <= n; i++) {
+      var t = a0 + (a1 - a0) * i / n;
+      if (axis === 'y') pts.push([center[0] + R * Math.cos(t), center[1], center[2] + R * Math.sin(t)]);
+      else if (axis === 'z') pts.push([center[0] + R * Math.cos(t), center[1] + R * Math.sin(t), center[2]]);
+      else pts.push([center[0], center[1] + R * Math.cos(t), center[2] + R * Math.sin(t)]);
+    }
+    poly(pts, { color: o.color || PAL.orange, w: o.w || 2.4 });
+    head(pts[pts.length - 2], pts[pts.length - 1], o.head || 8, o.color || PAL.orange);
+    return pts;
+  }
+
+  function measure(a, b, label, o) {
+    o = o || {};
+    line(a, b, { color: o.color || PAL.mute, w: 1, dash: [5, 4] });
+    var mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2];
+    text(mid, label, { size: o.size || 11.5, color: o.color || PAL.sub, align: 'center', dy: o.dy == null ? -10 : o.dy, dx: o.dx || 0 });
+  }
+
+  global.R3 = {
+    PAL: PAL, makeCam: makeCam, fitCam: fitCam, project: project, begin: begin,
+    line: line, poly: poly, arrow: arrow, head: head, dot: dot, text: text,
+    box: box, disc: disc, wire: wire, helix: helix, needle: needle,
+    ringArrow: ringArrow, measure: measure,
+    get cam() { return cam; }
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>
+(function (global) {
+  'use strict';
+
+  var P = global.PHY, R = global.R3, PAL = global.R3.PAL;
+  var PI = Math.PI, SIN = Math.sin, COS = Math.cos;
+
+  var FONT = '"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif';
+
+  function t2(ctx, x, y, s, o) {
+    o = o || {};
+    ctx.save();
+    ctx.font = (o.weight || 400) + ' ' + (o.size || 12.5) + 'px ' + FONT;
+    ctx.textAlign = o.align || 'left';
+    ctx.textBaseline = o.base || 'middle';
+    if (o.halo !== false) {
+      ctx.lineWidth = 3.4; ctx.strokeStyle = 'rgba(255,255,255,.94)'; ctx.lineJoin = 'round';
+      ctx.strokeText(s, x, y);
+    }
+    ctx.fillStyle = o.color || PAL.ink;
+    if (o.alpha != null) ctx.globalAlpha = o.alpha;
+    ctx.fillText(s, x, y);
+    ctx.restore();
+  }
+
+  function card(ctx, x, y, w, h, o) {
+    o = o || {};
+    ctx.save();
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, o.r == null ? 10 : o.r);
+    else ctx.rect(x, y, w, h);
+    ctx.fillStyle = o.fill || '#ffffff';
+    ctx.globalAlpha = o.alpha == null ? 1 : o.alpha;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    if (o.edge !== false) { ctx.lineWidth = 1; ctx.strokeStyle = o.edgeColor || PAL.edge; ctx.stroke(); }
+    ctx.restore();
+  }
+
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+
+  function caption(ctx, W, H, text, color, size) {
+    var fs = size || 12;
+    ctx.save();
+    ctx.font = '400 ' + fs + 'px ' + FONT;
+    while (fs > 9.5 && ctx.measureText(text).width > W * 0.94) {
+      fs -= 0.5;
+      ctx.font = '400 ' + fs + 'px ' + FONT;
+    }
+    var wide = ctx.measureText(text).width > W * 0.94;
+    var hgt = wide ? 46 : 34;
+    ctx.fillStyle = 'rgba(255,255,255,.88)';
+    ctx.fillRect(0, H - hgt, W, hgt);
+    ctx.restore();
+    if (!wide) {
+      t2(ctx, W / 2, H - 17, text, { align: 'center', size: fs, color: color || PAL.sub, halo: false });
+      return;
+    }
+
+    var cut = Math.floor(text.length / 2), best = cut, bestd = 1e9;
+    for (var i = 6; i < text.length - 4; i++) {
+      var d = Math.abs(i - cut);
+      if (d < bestd && (text[i] === '；' || text[i] === '，' || text[i] === '、' || text[i] === '：' || text[i] === ' ')) { bestd = d; best = i; }
+    }
+    var l1 = text.slice(0, best + 1), l2 = text.slice(best + 1);
+    t2(ctx, W / 2, H - 32, l1, { align: 'center', size: fs, color: color || PAL.sub, halo: false });
+    t2(ctx, W / 2, H - 15, l2, { align: 'center', size: fs, color: color || PAL.sub, halo: false });
+  }
+
+  function to3(pts) {
+    var out = [];
+    for (var i = 0; i < pts.length; i++) out.push([pts[i][0], pts[i][1], 0]);
+    return out;
+  }
+
+  function setCam(ctx, W, H, st, opt, box, dx) {
+    opt = opt || {};
+    var yaw, pitch;
+    if (st.view === 'top') { yaw = opt.topYaw == null ? 0 : opt.topYaw; pitch = 1.5; }
+    else if (st.view === 'front') { yaw = 0; pitch = 0.02; }
+    else if (opt.fixed) { yaw = opt.yaw; pitch = opt.pitch; }
+    else { yaw = opt.yaw == null ? -0.62 : opt.yaw; pitch = opt.pitch == null ? 0.38 : opt.pitch; }
+    var cam = R.fitCam(W, H, { yaw: yaw, pitch: pitch, mx: opt.mx || 0.86, my: opt.my || 0.8 }, box);
+    cam.cx += dx || 0;
+    R3.begin({ ctx: ctx, cam: cam, w: W, h: H });
+    return cam;
+  }
+
+  function ground(y, xr, zr, step) {
+    var x, z;
+    for (x = -xr; x <= xr + 1e-6; x += step) R.line([x, y, -zr], [x, y, zr], { color: '#eef2f7', w: 1 });
+    for (z = -zr; z <= zr + 1e-6; z += step) R.line([-xr, y, z], [xr, y, z], { color: '#eef2f7', w: 1 });
+  }
+
+  function bar(x0, x1, yc, halfH, halfD, o) {
+    o = o || {};
+    var a = (x0 + x1) / 2, b = (x1 - x0) / 2;
+    R.box(a, x1, yc - halfH, yc + halfH, -halfD, halfD, { color: o.n || PAL.red, edgeColor: '#ffffff' });
+    R.box(x0, a, yc - halfH, yc + halfH, -halfD, halfD, { color: o.s || PAL.deep, edgeColor: '#ffffff' });
+    R.text([x1, yc, 0], 'N', { color: '#ffffff', size: 13, weight: 700, align: 'center', halo: false, dx: -6 });
+    R.text([x0, yc, 0], 'S', { color: '#ffffff', size: 13, weight: 700, align: 'center', halo: false, dx: 6 });
+  }
+
+  function drawLines(lines, o) {
+    o = o || {};
+    var i, k;
+    for (i = 0; i < lines.length; i++) {
+      var pts = lines[i];
+      if (!pts || pts.length < 2) continue;
+      R.poly(pts, { color: o.color || PAL.blue, w: o.w || 1.7, alpha: o.alpha == null ? 0.9 : o.alpha });
+      if (o.arrow !== false && pts.length > 12) {
+        var idx = Math.floor(pts.length * (o.at == null ? 0.56 : o.at));
+        R.head(pts[Math.max(0, idx - 3)], pts[idx], o.head || 7, o.color || PAL.blue);
+      }
+    }
+  }
+
+  function dirOf(a) { return [SIN(a), 0, -COS(a)]; }
+
+  function ease(st, key, target, k) {
+    var cur = st[key];
+    if (cur == null) { st[key] = target; return target; }
+    var d = target - cur;
+    while (d > PI) d -= 2 * PI;
+    while (d < -PI) d += 2 * PI;
+    st[key] = cur + d * (k || 0.16);
+    return st[key];
+  }
+
+  function northNeedle(st, target, k) {
+    if (!st.live) { st.ang = target; return target; }
+    return ease(st, 'ang', target, k);
+  }
+
+  function intro(ctx, W, H, st) {
+    var cy = H * 0.44, x0 = W * 0.10, x1 = W * 0.90;
+    var xs = [x0, x0 + (x1 - x0) * 0.333, x0 + (x1 - x0) * 0.666, x1];
+    ctx.save();
+    ctx.strokeStyle = PAL.edge; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x0, cy); ctx.lineTo(x1, cy); ctx.stroke();
+    ctx.restore();
+
+    var nodes = [
+      { y: '战国', c1: '司南', c2: '磁石指南，最早的方向器' },
+      { y: '12 世纪', c1: '指南针上船', c2: '宋代已用于航海' },
+      { y: '1820', c1: '奥斯特', c2: '导线旁，磁针动了' },
+      { y: '今天', c1: '磁浮 · 电磁弹射', c2: '磁，成了一门技术' }
+    ];
+    var r = Math.min(34, W * 0.028);
+    for (var i = 0; i < 4; i++) {
+      var x = xs[i];
+      card(ctx, x - r, cy - r, r * 2, r * 2, { r: r, fill: '#f8fafd', edgeColor: PAL.edge });
+      ctx.save();
+      ctx.translate(x, cy);
+      if (i === 0) {
+        ctx.strokeStyle = PAL.deep; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(0, 3, r * 0.52, 0, PI * 2); ctx.stroke();
+        ctx.fillStyle = PAL.deep;
+        ctx.beginPath(); ctx.ellipse(-2, -1, r * 0.24, r * 0.3, 0.3, 0, PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(3, -6); ctx.lineTo(r * 0.42, -r * 0.5); ctx.lineWidth = 2.6; ctx.strokeStyle = PAL.deep; ctx.stroke();
+      } else if (i === 1) {
+        ctx.strokeStyle = PAL.mute; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(0, 0, r * 0.6, 0, PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(0, 0, r * 0.4, 0, PI * 2); ctx.stroke();
+        ctx.lineWidth = 2.6; ctx.strokeStyle = PAL.red;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(r * 0.36, -r * 0.3); ctx.stroke();
+        ctx.strokeStyle = PAL.deep;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-r * 0.36, r * 0.3); ctx.stroke();
+      } else if (i === 2) {
+        ctx.strokeStyle = PAL.sub; ctx.lineWidth = 2.2;
+        ctx.beginPath(); ctx.moveTo(-r * 0.62, -r * 0.34); ctx.lineTo(r * 0.62, -r * 0.34); ctx.stroke();
+        ctx.strokeStyle = PAL.orange; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(r * 0.3, -r * 0.34); ctx.lineTo(r * 0.62, -r * 0.34); ctx.stroke();
+        ctx.beginPath(); ctx.arc(0, r * 0.28, r * 0.3, 0, PI * 2); ctx.strokeStyle = PAL.mute; ctx.stroke();
+        ctx.strokeStyle = PAL.red; ctx.lineWidth = 2.4;
+        ctx.beginPath(); ctx.moveTo(-r * 0.22, r * 0.42); ctx.lineTo(r * 0.22, r * 0.14); ctx.stroke();
+      } else {
+        ctx.strokeStyle = PAL.mute; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(-r * 0.62, r * 0.3); ctx.lineTo(r * 0.62, r * 0.3); ctx.stroke();
+        ctx.fillStyle = PAL.deep;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(-r * 0.5, -r * 0.42, r, r * 0.42, 5); else ctx.rect(-r * 0.5, -r * 0.42, r, r * 0.42);
+        ctx.fill();
+        ctx.fillStyle = PAL.orange;
+        ctx.fillRect(-r * 0.28, r * 0.02, r * 0.16, r * 0.1);
+        ctx.fillRect(r * 0.12, r * 0.02, r * 0.16, r * 0.1);
+      }
+      ctx.restore();
+      t2(ctx, x, cy - r - 16, nodes[i].y, { align: 'center', size: 12, color: PAL.orange, weight: 700 });
+      t2(ctx, x, cy + r + 16, nodes[i].c1, { align: 'center', size: 12.5, color: PAL.ink, weight: 700 });
+      t2(ctx, x, cy + r + 33, nodes[i].c2, { align: 'center', size: 11.5, color: PAL.sub });
+    }
+
+    var bw = Math.min(W * 0.62, 560), bh = 54, bx = (W - bw) / 2, by = H * 0.72;
+    card(ctx, bx, by, bw, bh, { fill: '#eef5fd', edgeColor: '#d7e5f7', r: 12 });
+    t2(ctx, W / 2, by + bh / 2, '电和磁，到底有没有关系？', { align: 'center', size: 19, weight: 700, color: PAL.navy });
+
+    var chips = ['场：看不见的物质', '磁感线：画出来的模型', '安培定则：把方向锁死'];
+    var cw = Math.min(W * 0.2, 180), gap = 12;
+    var tw = chips.length * cw + (chips.length - 1) * gap;
+    for (var k = 0; k < chips.length; k++) {
+      var cx = (W - tw) / 2 + k * (cw + gap);
+      card(ctx, cx, by + bh + 12, cw, 26, { r: 13, fill: '#ffffff', edgeColor: PAL.edge });
+      t2(ctx, cx + cw / 2, by + bh + 25, chips[k], { align: 'center', size: 11.5, color: PAL.sub });
+    }
+  }
+
+  function oerstedScene(ctx, W, H, st) {
+    var place = st.place || 'plane';
+    var yWire = place === 'above' ? 0.62 : (place === 'below' ? -0.62 : 0.0);
+    var nd = [place === 'plane' ? 1.05 : 0.0, 0.03, 0.0];
+    var half = 2.6, I = st.dir || 1;
+    var B = P.wireFiniteB(nd, [0, yWire, 0], [0, 0, 1], half, I);
+    var bh = Math.hypot(B[0], B[2]), bv = B[1];
+    var angT = bh < 0.4 ? 0 : Math.atan2(B[0], -B[2]);
+
+    var ylo = Math.min(0, yWire) - 0.42, yhi = Math.max(0.25, yWire + 0.42);
+    var box = [-2.6, 2.6, ylo, yhi, -2.9, 2.9];
+    setCam(ctx, W, H, st, { yaw: -0.62, pitch: 0.44, fixed: st.view === 'fixed', mx: 0.96, my: 0.94 }, box);
+    ground(-0.06, 1.7, 1.7, 0.45);
+
+    var a = [0, yWire, -half], b = [0, yWire, half];
+    R.wire(a, b, { w: 9 });
+    R.head([0, yWire, half - 0.55], [0, yWire, half - 0.02], 10, PAL.sub);
+    R.text([0.12, yWire + 0.1, half - 0.6], 'I', { size: 14, weight: 700, color: PAL.red });
+    R.text([0, yWire, -half - 0.3], '导线', { size: 11.5, color: PAL.sub, align: 'center' });
+
+    if (place !== 'plane') {
+      R.poly([[0, yWire, 0], [0, 0.06, 0]], { color: PAL.mute, w: 1, dash: [4, 4], alpha: 0.8 });
+      R.text([0, yWire * 0.5, 0], 'd', { size: 11, color: PAL.mute, dx: 8 });
+    }
+
+    R.disc([nd[0], 0.012, nd[2]], 'y', 0.40, { fill: '#ffffff', color: PAL.edge, w: 1.2, alpha: 0.95 });
+    R.disc([nd[0], 0.016, nd[2]], 'y', 0.28, { color: '#eef2f7', w: 1 });
+    var ang = northNeedle(st, angT, 0.14);
+    R.needle([nd[0], 0.05, nd[2]], dirOf(ang), 0.76, { w: 4.4 });
+    R.text([nd[0], 0.02, nd[2]], '小磁针', { size: 11, color: PAL.sub, dy: 26, align: 'center' });
+
+    var bmag = Math.hypot(bh, bv);
+    if (bmag > 1e-4) {
+      var sc = Math.min(0.62, 0.2 + 0.2 * bmag);
+      var ux = B[0] / bmag, uz = B[2] / bmag, uy = B[1] / bmag;
+      R.arrow([nd[0], 0.14, nd[2]], [nd[0] + ux * sc, 0.14 + uy * sc, nd[2] + uz * sc], { color: PAL.orange, w: 2.4, head: 9 });
+      R.text([nd[0] + ux * sc * 0.5, 0.14 + uy * sc * 0.5 + (uy > 0 ? 0.16 : -0.02), nd[2] + uz * sc * 0.5],
+        Math.abs(bv) > Math.abs(bh) * 1.4 ? 'B 竖直' : 'B 水平', { size: 11.5, color: PAL.orange, align: 'center' });
+    }
+
+    var cap = place === 'plane'
+      ? '导线与磁针在同一平面：B 垂直于桌面，磁针只能在水平面里转 —— 转不动'
+      : '导线' + (place === 'above' ? '抬到磁针正上方' : '放到磁针正下方') + '：B 变成水平，磁针立刻转成与导线垂直';
+    t2(ctx, W * 0.5, H - 16, cap, { align: 'center', size: 12, color: PAL.sub });
+  }
+
+  function actions(ctx, W, H, st) {
+    var gap = 16, pw = (W - gap * 4) / 3, ph = Math.min(H * 0.66, 430), py = H * 0.14;
+    var titles = ['磁体 — 磁体', '磁体 — 电流', '电流 — 电流'];
+    var subs = ['同名相斥，异名相吸', '通电导线在磁场里被推动', '同向相吸，反向相斥'];
+    for (var i = 0; i < 3; i++) {
+      var x = gap + i * (pw + gap);
+      card(ctx, x, py, pw, ph, { fill: '#ffffff', edgeColor: PAL.edge, r: 12 });
+      t2(ctx, x + 14, py + 20, titles[i], { size: 13, weight: 700, color: PAL.ink });
+      t2(ctx, x + 14, py + 38, subs[i], { size: 11, color: PAL.sub });
+      ctx.save();
+      ctx.beginPath(); ctx.rect(x, py, pw, ph); ctx.clip();
+      ctx.translate(x + pw / 2, py + ph * 0.52);
+      var s = Math.min(pw / 3.4, ph / 3.4);
+      if (i === 0) {
+
+        bar2(ctx, -s * 0.95, -s * 0.12, s, PAL.deep, PAL.deep, 'S');
+        bar2(ctx, s * 0.12, s * 0.95, s, PAL.red, PAL.red, 'N');
+        arrow2(ctx, -s * 0.1, 0, -s * 0.42, 0, PAL.orange);
+        arrow2(ctx, s * 0.1, 0, s * 0.42, 0, PAL.orange);
+        t2(ctx, 0, -s * 0.62, '互相吸引', { align: 'center', size: 11.5, color: PAL.orange });
+      } else if (i === 1) {
+
+        gapMagnet(ctx, s);
+        var dx = st.power ? s * 0.30 : 0;
+        ctx.strokeStyle = PAL.mute; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(0, -s * 1.02); ctx.lineTo(0, -s * 0.60); ctx.stroke();
+        ctx.strokeStyle = '#dde2e9'; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.moveTo(0, -s * 0.60); ctx.lineTo(dx, s * 0.38); ctx.stroke();
+        ctx.strokeStyle = PAL.sub; ctx.lineWidth = 2.6;
+        ctx.beginPath(); ctx.moveTo(0, -s * 0.60); ctx.lineTo(dx, s * 0.38); ctx.stroke();
+        ctx.fillStyle = PAL.orange;
+        ctx.beginPath(); ctx.arc(dx, s * 0.38, 4.4, 0, PI * 2); ctx.fill();
+        if (st.power) arrow2(ctx, dx + s * 0.06, s * 0.38, dx + s * 0.40, s * 0.38, PAL.orange);
+        t2(ctx, 0, s * 0.9, st.power ? '通电 → 导线被推出' : '未通电 → 导线静止', { align: 'center', size: 11.5, color: st.power ? PAL.orange : PAL.mute });
+      } else {
+
+        var same = st.same;
+        wire2(ctx, -s * 0.34, s, PAL.deep, 1);
+        wire2(ctx, s * 0.34, s, PAL.deep, same ? 1 : -1);
+        var dir = same ? -1 : 1;
+        arrow2(ctx, -s * 0.34, 0, -s * 0.34 + dir * s * 0.34, 0, PAL.orange);
+        arrow2(ctx, s * 0.34, 0, s * 0.34 - dir * s * 0.34, 0, PAL.orange);
+        t2(ctx, 0, -s * 0.86, same ? '同向电流：相吸' : '反向电流：相斥', { align: 'center', size: 11.5, color: PAL.orange });
+      }
+      ctx.restore();
+    }
+    var by = py + ph + 14;
+    card(ctx, gap, by, W - gap * 2, 40, { fill: '#eef5fd', edgeColor: '#d7e5f7', r: 10 });
+    t2(ctx, W / 2, by + 20, '三组实验、六种搭配，都没有接触，却都发生了力的作用 —— 中间一定有什么在传力', { align: 'center', size: 12.5, color: PAL.navy });
+  }
+
+  function bar2(ctx, x0, x1, s, cS, cN, tag) {
+    var h = s * 0.3;
+    ctx.fillStyle = cS;
+    ctx.fillRect(x0, -h, x1 - x0, h * 2);
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.2;
+    ctx.strokeRect(x0, -h, x1 - x0, h * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 ' + Math.round(s * 0.24) + 'px ' + FONT;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(tag, (x0 + x1) / 2, 1);
+  }
+
+  function arrow2(ctx, x0, y0, x1, y1, color) {
+    var a = Math.atan2(y1 - y0, x1 - x0), L = Math.hypot(x1 - x0, y1 - y0);
+    if (L < 2) return;
+    ctx.save();
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 - 8 * Math.cos(a - 0.42), y1 - 8 * Math.sin(a - 0.42));
+    ctx.lineTo(x1 - 8 * Math.cos(a + 0.42), y1 - 8 * Math.sin(a + 0.42));
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function wire2(ctx, x, s, color, dir) {
+    ctx.save();
+    ctx.strokeStyle = '#dde2e9'; ctx.lineWidth = 7;
+    ctx.beginPath(); ctx.moveTo(x, -s * 0.66); ctx.lineTo(x, s * 0.66); ctx.stroke();
+    ctx.strokeStyle = color; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x, -s * 0.66); ctx.lineTo(x, s * 0.66); ctx.stroke();
+    ctx.fillStyle = color;
+    var y = dir > 0 ? s * 0.52 : -s * 0.52;
+    ctx.beginPath();
+    ctx.moveTo(x, y + dir * s * 0.12);
+    ctx.lineTo(x - 4.5, y);
+    ctx.lineTo(x + 4.5, y);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function gapMagnet(ctx, s) {
+    ctx.save();
+
+    ctx.fillStyle = PAL.deep;
+    ctx.fillRect(-s * 0.82, -s * 0.62, s * 0.34, s * 1.24);
+    ctx.fillStyle = PAL.red;
+    ctx.fillRect(s * 0.48, -s * 0.62, s * 0.34, s * 1.24);
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.3;
+    ctx.strokeRect(-s * 0.82, -s * 0.62, s * 0.34, s * 1.24);
+    ctx.strokeRect(s * 0.48, -s * 0.62, s * 0.34, s * 1.24);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '700 ' + Math.round(s * 0.22) + 'px ' + FONT;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('S', -s * 0.65, 0);
+    ctx.fillText('N', s * 0.65, 0);
+    ctx.fillStyle = PAL.mute;
+    ctx.font = Math.round(s * 0.16) + 'px ' + FONT;
+    ctx.fillText('磁极之间', 0, -s * 0.9);
+    ctx.restore();
+  }
+
+  function uMagnet(ctx, s, on) {
+    ctx.save();
+    ctx.strokeStyle = '#dde2e9'; ctx.lineWidth = 13; ctx.lineCap = 'butt';
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.46, s * 0.72); ctx.lineTo(-s * 0.46, -s * 0.18);
+    ctx.quadraticCurveTo(-s * 0.46, -s * 0.62, 0, -s * 0.62);
+    ctx.quadraticCurveTo(s * 0.46, -s * 0.62, s * 0.46, -s * 0.18);
+    ctx.lineTo(s * 0.46, s * 0.72);
+    ctx.stroke();
+    ctx.strokeStyle = PAL.red; ctx.lineWidth = 9;
+    ctx.beginPath(); ctx.moveTo(-s * 0.46, s * 0.72); ctx.lineTo(-s * 0.46, s * 0.40); ctx.stroke();
+    ctx.strokeStyle = PAL.deep;
+    ctx.beginPath(); ctx.moveTo(s * 0.46, s * 0.72); ctx.lineTo(s * 0.46, s * 0.40); ctx.stroke();
+    ctx.restore();
+  }
+
+  function fieldDir(ctx, W, H, st) {
+    var box = [-2.7, 2.7, -0.4, 3.6, -2.7, 2.7];
+    setCam(ctx, W, H, st, { yaw: -0.5, pitch: 0.5, mx: 0.9, my: 0.86 }, box);
+    ground(-0.02, 2.8, 2.2, 0.6);
+    var a = 1.15, yc = 0.28;
+    bar(-a, a, yc, 0.24, 0.24, {});
+    var poles = P.barPoles(a).map(function (q) { return { p: [q.p[0], yc, 0], q: q.q }; });
+
+    var raw = P.barLines(a, { az: 1 });
+    for (var i = 0; i < raw.length; i++) for (var j = 0; j < raw[i].length; j++) raw[i][j][1] += yc;
+    var lines = P.revolveAllX(raw, 6);
+    drawLines(lines, { color: PAL.blue, alpha: 0.72, w: 1.5, head: 6 });
+
+    var p = [st.nx == null ? 1.7 : st.nx, yc + 0.02, st.nz == null ? 0.85 : st.nz];
+    var B = P.polesB(p, poles);
+    var angT = Math.atan2(B[0], -B[2]);
+    var ang = northNeedle(st, angT, 0.18);
+    var bl = Math.hypot(B[0], B[2]) || 1;
+
+    R.poly([[p[0] - B[0] / bl * 0.95, p[1], p[2] - B[2] / bl * 0.95], [p[0] + B[0] / bl * 0.95, p[1], p[2] + B[2] / bl * 0.95]],
+      { color: PAL.orange, w: 1.2, dash: [6, 5], alpha: 0.85 });
+    R.disc(p, 'y', 0.52, { fill: '#ffffff', color: PAL.edge, w: 1.2, alpha: 0.96 });
+    R.disc(p, 'y', 0.30, { color: '#eef2f7', w: 1 });
+    R.needle([p[0], p[1] + 0.01, p[2]], dirOf(ang), 0.74, { w: 4.4, head: 8 });
+    R.text([p[0], p[1] + 0.72, p[2]], 'N 极指向 = B 方向', { size: 11, color: PAL.red, align: 'center' });
+
+    R.arrow([p[0], p[1] + 0.02, p[2]], [p[0] + B[0] / bl * 0.5, p[1] + 0.02, p[2] + B[2] / bl * 0.5], { color: PAL.orange, w: 2, head: 7 });
+    caption(ctx, W, H, '磁针静止时 N 极所指的方向，就是该点的磁场方向 —— 也是磁感线在这点的切线方向');
+    st._B = Math.hypot(B[0], B[1], B[2]);
+  }
+
+  function filings(ctx, W, H, st) {
+    var a = 1.25, yc = 0.24, m = st.morph == null ? 0 : st.morph;
+    setCam(ctx, W, H, st, { yaw: -0.5, pitch: 0.6, mx: 0.92, my: 0.9 }, [-2.9, 2.9, -0.2, 2.6, -2.1, 2.1]);
+    ground(-0.05, 2.6, 1.8, 0.45);
+    var poles = P.barPoles(a).map(function (q) { return { p: [q.p[0], yc, 0], q: q.q }; });
+
+    if (m < 0.98) {
+      var al = 0.85 * (1 - m);
+      for (var x = -2.7; x <= 2.71; x += 0.155) {
+        for (var z = -2.0; z <= 2.01; z += 0.155) {
+          var jx = x + 0.05 * Math.sin(x * 37.1 + z * 11.3);
+          var jz = z + 0.05 * Math.cos(z * 29.7 - x * 7.9);
+          if (Math.abs(jx) < a + 0.05 && Math.abs(jz) < 0.26) continue;
+          var B = P.polesB([jx, yc, jz], poles);
+          var bl = Math.hypot(B[0], B[2]) || 1;
+          var dx = B[0] / bl * 0.075, dz = B[2] / bl * 0.075;
+          R.line([jx - dx, 0.005, jz - dz], [jx + dx, 0.005, jz + dz], { color: '#94a6b8', w: 1.05, alpha: al });
+        }
+      }
+    }
+    if (m > 0.02) {
+      var raw = P.barLines(a, { az: 1 });
+      for (var i = 0; i < raw.length; i++) for (var j = 0; j < raw[i].length; j++) raw[i][j][1] += yc;
+      drawLines(P.revolveAllX(raw, 8), { color: PAL.blue, alpha: 0.92 * m, w: 1.6, head: 6 });
+    }
+    bar(-a, a, yc, 0.24, 0.24, {});
+    caption(ctx, W, H, m < 0.5 ? '细铁屑在磁场里被磁化成小磁针，一排排站好了队' : '沿铁屑画出的曲线：每一点的切线方向 = 该点的磁场方向', m < 0.5 ? PAL.sub : PAL.navy);
+  }
+
+  function magnets(ctx, W, H, st) {
+    var kind = st.mag == null ? 0 : st.mag;
+    if (kind === 0) {
+      var a = 1.2, yc = 0.26;
+      setCam(ctx, W, H, st, { yaw: -0.55, pitch: 0.5, mx: 0.94, my: 0.9 }, [-2.6, 2.6, -0.4, 3.6, -2.6, 2.6]);
+      ground(-0.05, 2.6, 1.4, 0.45);
+      var raw = P.barLines(a, { az: 1 });
+      for (var i = 0; i < raw.length; i++) for (var j = 0; j < raw[i].length; j++) raw[i][j][1] += yc;
+      drawLines(P.revolveAllX(raw, 6), { color: PAL.blue, alpha: 0.88, w: 1.55, head: 6 });
+      bar(-a, a, yc, 0.24, 0.24, {});
+      caption(ctx, W, H, '条形磁体：两极最密，中间最疏；线从 N 出、进 S，在磁体内部由 S 回到 N');
+      return;
+    }
+
+    setCam(ctx, W, H, st, { yaw: -0.28, pitch: 0.24, mx: 0.95, my: 0.9 }, [-3.4, 3.4, -1.1, 2.6, -0.9, 0.9]);
+    ground(-0.6, 3.0, 0.8, 0.5);
+
+    if (kind === 1) {
+
+      R.box(-0.72, -0.34, -0.55, 0.98, -0.26, 0.26, { color: PAL.deep, edgeColor: '#ffffff' });
+      R.box(0.34, 0.72, -0.55, 0.98, -0.26, 0.26, { color: PAL.red, edgeColor: '#ffffff' });
+      R.box(-0.72, 0.72, -0.62, -0.30, -0.26, 0.26, { color: '#94a6b8', edgeColor: '#ffffff' });
+      R.text([-0.53, 0.86, 0], 'N', { color: '#ffffff', size: 12, weight: 700, align: 'center', halo: false });
+      R.text([0.53, 0.86, 0], 'S', { color: '#ffffff', size: 12, weight: 700, align: 'center', halo: false });
+      var poles = [{ p: [-0.53, 0.98, 0], q: 1 }, { p: [0.53, 0.98, 0], q: -1 }];
+      var f = P.planeF(function (p) { return P.polesB(p, poles); });
+      var seeds = [1.02, 1.16, 1.38, 1.72, 2.2];
+      for (var s = 0; s < seeds.length; s++) {
+        var pts = P.traceBoth(f, 0, seeds[s], 0.03, 3000, 3.4, function (x, y) {
+          return Math.hypot(x - 0.53, y - 0.98) < 0.06 || Math.hypot(x + 0.53, y - 0.98) < 0.06;
+        });
+        var p3 = to3(pts);
+        R.poly(p3, { color: PAL.blue, w: 1.7, alpha: 0.9 });
+        if (p3.length > 20) R.head(p3[Math.floor(p3.length * 0.5) - 2], p3[Math.floor(p3.length * 0.5)], 7, PAL.blue);
+      }
+      caption(ctx, W, H, '蹄形磁体：两极正对，间隙里的磁感线几乎是平行的 —— 这就是"匀强磁场"的原型');
+      return;
+    }
+
+    var aa = 0.62, d = 0.5, yc2 = 0.0;
+    var kindName = kind === 2 ? 'same' : 'opp';
+    var pp = P.pairPoles(aa, d, kindName);
+    var fo = P.planeF(function (q) { return P.polesB(q, pp); });
+    var sd = kind === 2 ? [0.25, 0.55, 0.95, 1.5, 2.2] : [0.12, 0.42, 0.8, 1.3, 2.0];
+    for (var t = 0; t < sd.length; t++) {
+      var line = to3(P.traceBoth(fo, 0, sd[t], 0.028, 3200, 3.2, null));
+      R.poly(line, { color: PAL.blue, w: 1.7, alpha: 0.9 });
+      if (line.length > 20) R.head(line[Math.floor(line.length * 0.45) - 2], line[Math.floor(line.length * 0.45)], 7, PAL.blue);
+    }
+
+    var lx0 = -2 * aa - d, lx1 = -d, rx0 = d, rx1 = 2 * aa + d;
+    R.box(lx0, (lx0 + lx1) / 2, -0.26, 0.26, -0.2, 0.2, { color: PAL.deep, edgeColor: '#fff' });
+    R.box((lx0 + lx1) / 2, lx1, -0.26, 0.26, -0.2, 0.2, { color: PAL.red, edgeColor: '#fff' });
+    var rr0 = kind === 2 ? PAL.red : PAL.deep;
+    R.box(rx0, (rx0 + rx1) / 2, -0.26, 0.26, -0.2, 0.2, { color: rr0, edgeColor: '#fff' });
+    R.box((rx0 + rx1) / 2, rx1, -0.26, 0.26, -0.2, 0.2, { color: kind === 2 ? PAL.deep : PAL.red, edgeColor: '#fff' });
+    R.text([-d - 0.12, 0, 0], 'N', { color: '#fff', size: 11, weight: 700, halo: false, align: 'center' });
+    R.text([d + 0.12, 0, 0], kind === 2 ? 'N' : 'S', { color: '#fff', size: 11, weight: 700, halo: false, align: 'center' });
+    if (kind === 2) {
+      R.disc([0, 0, 0], 'z', 0.09, { fill: '#ffffff', color: PAL.orange, w: 1.4 });
+      R.text([0, -0.44, 0], '中性点：B ≈ 0', { size: 11, color: PAL.orange, align: 'center' });
+    }
+    caption(ctx, W, H, kind === 2 ? '同名磁极相对：中间出现"中性点"，磁感线互相排开，谁也不进对方的领地' : '异名磁极相对：磁感线从 N 直奔 S，密密地穿过间隙');
+  }
+
+  function density(ctx, W, H, st) {
+    var a = 1.2, yc = 0.26;
+    setCam(ctx, W, H, st, { yaw: -0.5, pitch: 0.5, mx: 0.94, my: 0.9 }, [-2.6, 2.6, -0.4, 3.6, -2.6, 2.6]);
+    ground(-0.05, 2.5, 1.8, 0.45);
+    var raw = P.barLines(a, { az: 1 });
+    for (var i = 0; i < raw.length; i++) for (var j = 0; j < raw[i].length; j++) raw[i][j][1] += yc;
+    var lines = P.revolveAllX(raw, 8);
+    drawLines(lines, { color: PAL.blue, alpha: 0.9, w: 1.7, head: 0 });
+    bar(-a, a, yc, 0.24, 0.24, {});
+
+    var p = [st.nx == null ? 1.9 : st.nx, 0.02, st.nz == null ? 0.25 : st.nz];
+    var Rr = 0.44;
+    var cnt = 0;
+    for (var k = 0; k < lines.length; k++) {
+      var L = lines[k];
+      for (var q = 1; q < L.length; q++) {
+        var d0 = Math.hypot(L[q - 1][0] - p[0], L[q - 1][1] - p[1], L[q - 1][2] - p[2]);
+        var d1 = Math.hypot(L[q][0] - p[0], L[q][1] - p[1], L[q][2] - p[2]);
+        if ((d0 - Rr) * (d1 - Rr) <= 0) cnt++;
+      }
+    }
+    R.disc(p, 'y', Rr, { color: PAL.orange, w: 1.4, dash: [5, 4] });
+    R.disc(p, 'y', 0.05, { fill: PAL.orange, color: PAL.orange });
+    var poles = P.barPoles(a).map(function (q2) { return { p: [q2.p[0], yc, 0], q: q2.q }; });
+    var B = P.polesB([p[0], yc, p[2]], poles);
+    var ref = P.polesB([0, yc, 1.25], poles);
+    st._cnt = cnt;
+    st._b = Math.hypot(B[0], B[1], B[2]) / Math.hypot(ref[0], ref[1], ref[2]);
+    var ps2 = R.project([p[0], 0.02, p[2]]);
+    t2(ctx, ps2[0] + 34, ps2[1] - 26, cnt + ' 条', { size: 12, weight: 700, color: PAL.orange, align: 'left' });
+    caption(ctx, W, H, '拖动小圆：圆越小、穿过的线越多，那里的磁场就越强 —— 疏密不是画着好看，它表示强弱');
+  }
+
+  function closed(ctx, W, H, st) {
+    var pw = W / 2 - 16, ph = H - 46, y0 = 40;
+    ctx.save();
+    ctx.strokeStyle = PAL.edge; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W / 2, 16); ctx.lineTo(W / 2, H - 20); ctx.stroke();
+    ctx.restore();
+
+    var cam1 = R.fitCam(pw - 20, ph - 20, { yaw: 0, pitch: 0.02, mx: 0.9, my: 0.86 }, [-2.4, 2.4, -1.8, 1.8, -0.1, 0.1]);
+    cam1.cx += 20; cam1.cy += y0 + 12;
+    R3.begin({ ctx: ctx, cam: cam1, w: W, h: H });
+    var ch = [{ p: [-0.72, 0, 0], q: 1 }, { p: [0.72, 0, 0], q: -1 }];
+    var fe = P.planeF(function (q) { return P.polesB(q, ch); });
+    for (var i = 0; i < 14; i++) {
+      var th = 2 * PI * i / 14;
+      var pts = P.trace2D(fe, -0.72 + 0.13 * Math.cos(th), 0.13 * Math.sin(th), 0.02, 4000, 2.6, function (x, y) {
+        return Math.hypot(x - 0.72, y) < 0.1;
+      });
+      var pe = to3(pts);
+      R.poly(pe, { color: PAL.orange, w: 1.5, alpha: 0.85 });
+      if (pe.length > 14) R.head(pe[Math.floor(pe.length * 0.5) - 2], pe[Math.floor(pe.length * 0.5)], 6, PAL.orange);
+    }
+    R.disc([-0.72, 0, 0], 0.12, PAL.red, true);
+    R.disc([0.72, 0, 0], 0.12, PAL.deep, true);
+    R.text([-0.72, 0.24, 0], '+', { color: PAL.red, size: 13, weight: 700, align: 'center' });
+    R.text([0.72, 0.24, 0], '−', { color: PAL.deep, size: 13, weight: 700, align: 'center' });
+
+    var cam2 = R.fitCam(pw - 20, ph - 20, { yaw: 0, pitch: 0.02, mx: 0.9, my: 0.86 }, [-2.6, 2.6, -0.6, 3.3, -0.1, 0.1]);
+    cam2.cx += W / 2 + 14; cam2.cy += y0 + 12;
+    R3.begin({ ctx: ctx, cam: cam2, w: W, h: H });
+    var a = 1.0;
+    var raw = P.barLines(a, { az: 1, angles: [66, 78, 88] });
+    drawLines(raw.map(to3), { color: PAL.blue, w: 1.6, alpha: 0.9, head: 7 });
+    R.box(-a, a, -0.22, 0.22, -0.22, 0.22, { color: PAL.blue, edgeColor: '#fff' });
+    R.box(0, a, -0.22, 0.22, -0.22, 0.22, { color: PAL.red, edgeColor: '#fff' });
+    R.text([a + 0.12, 0, 0], 'N', { size: 12, weight: 700, color: PAL.red });
+    R.text([-a - 0.12, 0, 0], 'S', { size: 12, weight: 700, color: PAL.deep, align: 'right' });
+    if (st.inside) {
+      R.poly([[-a * 0.5, 0, 0], [a * 0.5, 0, 0]], { color: PAL.orange, w: 2, dash: [5, 4] });
+      R.head([0, 0, 0], [a * 0.5, 0, 0], 7, PAL.orange);
+      R.text([0, 0.3, 0], '内部 S → N', { size: 11, color: PAL.orange, align: 'center' });
+    }
+    t2(ctx, 16, 20, '电场线：起于正电荷，止于负电荷（不闭合）', { size: 12, color: PAL.navy, weight: 700 });
+    t2(ctx, W / 2 + 16, 20, '磁感线：从 N 出、回 S 进，内部 S→N（闭合）', { size: 12, color: PAL.navy, weight: 700 });
+    t2(ctx, W / 2 + 16, H - 14, st.inside ? '补上内部这一段，磁感线才真正闭合 —— 它是"一圈"，不是"半圈"' : '点「显示内部」，看磁体里面那一段', { size: 11.5, color: PAL.sub });
+  }
+
+  function wireScene(ctx, W, H, st) {
+    var I = st.dir || 1;
+    setCam(ctx, W, H, st, { yaw: -0.6, pitch: 0.4, mx: 0.95, my: 0.9 }, [-2.4, 2.4, -2.1, 2.1, -2.4, 2.4]);
+    if (st.view === 'top') ground(-0.02, 2.2, 2.2, 0.5);
+    var hh = 2.0;
+    R.wire([0, -hh, 0], [0, hh, 0], { w: 9 });
+    R.arrow([0, hh - 0.75, 0], [0, hh - 0.05, 0], { color: PAL.red, w: 3, head: 9 });
+    R.text([0.14, hh - 0.5, 0], 'I', { size: 14, weight: 700, color: PAL.red });
+
+    var rings = P.wireRings(I, [-1.25, 0, 1.25], [0.6, 1.0, 1.5], 72);
+    for (var i = 0; i < rings.length; i++) {
+      R.poly(rings[i], { color: PAL.blue, w: i === 4 ? 2.4 : 1.7, alpha: i === 4 ? 1 : 0.85 });
+      var idx = 14;
+      R.head(rings[i][idx - 3], rings[i][idx], 7, PAL.blue);
+      R.head(rings[i][rings[i].length - 18], rings[i][rings[i].length - 15], 7, PAL.blue);
+    }
+    var np = [1.0, 0, 0];
+    var B = P.wireB(np, [0, 0, 0], [0, 1, 0], I);
+    R.disc(np, 'y', 0.42, { fill: '#ffffff', color: PAL.edge, w: 1.2 });
+    R.needle([np[0], 0.04, np[2]], P.needleDir(B), 0.68, { w: 4, head: 7 });
+    R.text([np[0], 0.05, np[2]], '小磁针', { size: 11, color: PAL.sub, dy: 26, align: 'center' });
+    var label = st.view === 'top' ? '俯视：磁感线是一圈圈同心圆' : (st.view === 'front' ? '正视：圆被压成一组水平线 —— 每一条都垂直于导线' : '立体图：圆面与导线垂直，一圈套一圈');
+    caption(ctx, W, H, label);
+  }
+
+  function ampere(ctx, W, H, st) {
+    var I = st.dir || 1;
+    setCam(ctx, W, H, st, { yaw: -0.55, pitch: 0.36, mx: 0.95, my: 0.9 }, [-1.9, 1.9, -2.0, 2.0, -1.9, 1.9]);
+    var hh = 1.9;
+    R.wire([0, -hh, 0], [0, hh, 0], { w: 10 });
+    R.arrow([0, hh - 0.8, 0], [0, hh + 0.05, 0], { color: PAL.red, w: 3.4, head: 10 });
+    R.text([0.16, hh - 0.35, 0], '拇指 = 电流 I', { size: 12, weight: 700, color: PAL.red });
+
+    var ring = [];
+    for (var i = 0; i <= 90; i++) {
+      var t = 2 * PI * i / 90 * I;
+      ring.push([1.15 * Math.cos(t), 0, -1.15 * Math.sin(t)]);
+    }
+    R.poly(ring, { color: PAL.orange, w: 2.6 });
+    R.head(ring[70], ring[74], 9, PAL.orange);
+    R.head(ring[20], ring[24], 9, PAL.orange);
+    R.text([0, 0.34, -1.15], '四指 = 磁感线环绕方向', { size: 12, weight: 700, color: PAL.orange, align: 'center' });
+    var np = [1.15, 0, 0];
+    var B = P.wireB(np, [0, 0, 0], [0, 1, 0], I);
+    R.disc(np, 'y', 0.36, { fill: '#ffffff', color: PAL.edge, w: 1.2 });
+    R.needle([np[0], 0.04, np[2]], P.needleDir(B), 0.62, { w: 3.8, head: 7 });
+    caption(ctx, W, H, '右手握导线：拇指顺电流，四指弯向就是磁感线的环绕方向');
+  }
+
+  function coil(ctx, W, H, st) {
+    var N = st.turns == null ? 1 : st.turns, Rr = 0.7, pitch = 0.26, L = (N - 1) * pitch;
+    setCam(ctx, W, H, st, { yaw: -0.5, pitch: 0.34, mx: 0.95, my: 0.9 }, [-2.3, 2.3, -1.75, 1.75, -2.3, 2.3]);
+    var seeds = N === 1 ? [0.55, 0.78].map(function (v) { return v * Rr; })
+      : [0.62, 0.76, 0.88].map(function (v) { return v * Rr; });
+    var lines = P.coilLines(N, Rr, L, 1, { seeds: seeds, bound: 2.6, steps: 4000, h: 0.015, per: 24, az: 1, pitch: pitch });
+    drawLines(P.revolveAllY(lines, N === 1 ? 2 : 6, N === 1 ? 0 : 0.5), { color: PAL.blue, alpha: 0.85, w: 1.55, head: 7, at: 0.62 });
+
+    if (N === 1) {
+      var ring = [];
+      for (var i = 0; i <= 80; i++) { var t = 2 * PI * i / 80; ring.push([Rr * Math.cos(t), 0, -Rr * Math.sin(t)]); }
+      R.poly(ring, { color: PAL.deep, w: 4.2 });
+      R.head(ring[18], ring[22], 9, PAL.deep);
+    } else {
+      R.helix(-L / 2, L / 2, Rr, N, { color: PAL.deep, w: 3.6, per: 30 });
+      var arrowTop = [[Rr * Math.cos(-0.4), L / 2, -Rr * Math.sin(-0.4)]];
+      R.arrow([Rr * 0.98, L / 2 - 0.02, 0.1], [Rr * 0.98, L / 2 - 0.02, 0.55], { color: PAL.red, w: 2, head: 7 });
+    }
+    var Bc = P.segB(P.coilSegs(N, Rr, L, 0, 24, pitch), [0, 0, 0], 1)[1];
+    var B1 = P.segB(P.coilSegs(1, Rr, 0, 0, 48), [0, 0, 0], 1)[1];
+    st._ratio = Bc / B1;
+    R.text([0, L / 2 + 0.35, 0], 'N 极朝上', { size: 11.5, color: PAL.red, align: 'center' });
+    caption(ctx, W, H, N === 1 ? '单匝圆环：磁感线穿过环心，在环外绕回来' : '把圆环一圈圈叠起来：内部的线合成了"一根"，外部的线合成"一个条形磁体"');
+  }
+
+  function solenoid(ctx, W, H, st) {
+    var Rr = 0.75, L = 1.9, N = 8;
+    setCam(ctx, W, H, st, { yaw: -0.45, pitch: 0.3, mx: 0.95, my: 0.9 }, [-2.3, 2.3, -1.7, 1.7, -2.3, 2.3]);
+    var seeds = [0.6, 0.72, 0.84].map(function (v) { return v * Rr; });
+    var lines = P.coilLines(N, Rr, L, 1, { seeds: seeds, bound: 2.4, steps: 4000, h: 0.015, per: 24, az: 1 });
+    drawLines(P.revolveAllY(lines, 6), { color: PAL.blue, alpha: 0.85, w: 1.55, head: 6, at: 0.3 });
+    R.helix(-L / 2, L / 2, Rr, N, { color: PAL.deep, w: 3.2, per: 30, alpha: 0.95 });
+
+    if (st.compare) {
+      R.box(-0.3, 0.3, -L / 2, L / 2, -0.3, 0.3, { color: PAL.red, alpha: 0.22, edge: false });
+      R.text([0.42, L / 2 - 0.1, 0], '条形磁体', { size: 11, color: PAL.red });
+    }
+    R.arrow([0, -L / 2 + 0.15, 0], [0, L / 2 - 0.15, 0], { color: PAL.orange, w: 2.2, head: 8 });
+    R.text([0.18, 0.15, 0], '内部：S → N', { size: 11.5, color: PAL.orange, weight: 700 });
+    R.text([Rr + 0.18, -L / 2 + 0.2, 0], '外部：N → S', { size: 11.5, color: PAL.deep });
+    caption(ctx, W, H, '螺线管外部的磁场，跟条形磁体一模一样 —— 所以磁感线在内部由 S 回到 N，整条线闭合');
+  }
+
+  function quiz(ctx, W, H, st) {
+    var ans = st.ans == null ? 1 : st.ans;
+    setCam(ctx, W, H, st, { yaw: 0, pitch: 1.5, mx: 0.9, my: 0.88 }, [-1.9, 1.9, -0.2, 0.6, -1.9, 1.9]);
+    ground(-0.02, 1.6, 1.6, 0.4);
+    var np = [0.95, 0.05, 0];
+    var B = P.wireB(np, [0, 0, 0], [0, 1, 0], ans);
+
+    R.disc([0, 0.02, 0], 'y', 0.16, { fill: '#ffffff', color: PAL.sub, w: 1.6 });
+    if (ans > 0) R.dot([0, 0.02, 0], 4.5, PAL.sub, false);
+    else {
+      R.line([-0.1, 0.02, -0.1], [0.1, 0.02, 0.1], { color: PAL.sub, w: 2 });
+      R.line([-0.1, 0.02, 0.1], [0.1, 0.02, -0.1], { color: PAL.sub, w: 2 });
+    }
+    R.disc(np, 'y', 0.34, { fill: '#ffffff', color: PAL.edge, w: 1.1 });
+    var got = P.needleDir(B);
+    R.needle([np[0], 0.04, np[2]], got, 0.72, { w: 4.2 });
+
+    R.poly([[np[0], 0.06, np[2] - 0.62], [np[0], 0.06, np[2] - 0.38]], { color: PAL.orange, w: 1.6, dash: [5, 4] });
+    R.text([np[0], 0.1, np[2] - 0.75], '题目：N 极指北', { size: 11.5, color: PAL.orange, align: 'center' });
+    R.text([0, 0.1, 0.55], ans > 0 ? '电流向上 ⊙' : '电流向下 ⊗', { size: 12, weight: 700, color: PAL.navy, align: 'center' });
+    var ok = got[2] < -0.9;
+    caption(ctx, W, H, ok ? '✓ 对了：电流向上时，磁针 N 极指向正北' : '✗ 再试一次：把电流反过来，磁针会转 180°', ok ? PAL.green : PAL.red, 12.5);
+  }
+
+  function summary(ctx, W, H, st) {
+    var items = [
+      ['磁现象', '司南 · 磁卡 · 电动机', PAL.sub],
+      ['磁场', '看不见，但客观存在；\n对放入其中的磁体或电流有力的作用', PAL.navy],
+      ['磁感线', '假想模型：切线表方向，\n疏密表强弱，闭合、不相交', PAL.blue],
+      ['安培定则', '拇指电流、四指环绕；\n四指电流、拇指轴线', PAL.orange]
+    ];
+    var n = items.length, gap = 26, bw = Math.min(210, (W - gap * (n + 1)) / n), bh = 132;
+    var y = H * 0.24, total = n * bw + (n - 1) * gap, x0 = (W - total) / 2;
+    for (var i = 0; i < n; i++) {
+      var x = x0 + i * (bw + gap);
+      card(ctx, x, y, bw, bh, { fill: '#ffffff', edgeColor: PAL.edge, r: 12 });
+      ctx.save();
+      ctx.fillStyle = items[i][2];
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x, y, 4, bh, 2); else ctx.rect(x, y, 4, bh);
+      ctx.fill();
+      ctx.restore();
+      t2(ctx, x + 16, y + 24, items[i][0], { size: 15, weight: 700, color: items[i][2] });
+      var lines = items[i][1].split('\n');
+      for (var j = 0; j < lines.length; j++) t2(ctx, x + 16, y + 52 + j * 19, lines[j], { size: 11.5, color: PAL.sub });
+      if (i < n - 1) {
+        var ax = x + bw + 6, ay = y + bh / 2;
+        ctx.save(); ctx.strokeStyle = PAL.mute; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ax + gap - 12, ay); ctx.stroke();
+        ctx.fillStyle = PAL.mute;
+        ctx.beginPath(); ctx.moveTo(ax + gap - 12, ay); ctx.lineTo(ax + gap - 18, ay - 4); ctx.lineTo(ax + gap - 18, ay + 4); ctx.closePath(); ctx.fill();
+        ctx.restore();
+      }
+    }
+    var sy = y + bh + 34;
+    var ss = ['磁场看不见，判断它存在的方法：放进去一个磁体或电流，看有没有力。',
+      '磁感线是假想的：线是假的，场是真的；没有画线的地方，磁场照样在。',
+      '两套手形别混：直线电流握导线、拇指顺电流；环形与螺线管四指顺电流、拇指指轴线。'];
+    for (var k = 0; k < ss.length; k++) {
+      t2(ctx, x0, sy + k * 30, '·  ' + ss[k], { size: 13, color: k === 0 ? PAL.ink : PAL.sub });
+    }
+  }
+
+  global.SCENES = {
+    intro: intro,
+    oersted: oerstedScene,
+    actions: actions,
+    fieldDir: fieldDir,
+    filings: filings,
+    magnets: magnets,
+    density: density,
+    closed: closed,
+    wire: wireScene,
+    ampere: ampere,
+    coil: coil,
+    solenoid: solenoid,
+    quiz: quiz,
+    summary: summary
+  };
+  global.SCENE_HELP = { card: card, t2: t2, setCam: setCam, ground: ground, bar: bar, drawLines: drawLines, dirOf: dirOf, ease: ease };
+})(typeof window !== 'undefined' ? window : globalThis);</script>
+<script>
+(function (global) {
+  'use strict';
+  var P = global.PHY, PI = Math.PI;
+
+  function f2(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+  function f1(v) { return (Math.round(v * 10) / 10).toFixed(1); }
+  function deg(rad) { return Math.round(rad * 180 / PI); }
+  function dirWord(dx) { return dx > 0 ? '东' : '西'; }
+
+  function oerstedB(place, dir) {
+    var y = place === 'above' ? 0.62 : (place === 'below' ? -0.62 : 0);
+    var x = place === 'plane' ? 1.05 : 0;
+    return P.wireFiniteB([x, 0.03, 0], [0, y, 0], [0, 0, 1], 2.6, dir);
+  }
+
+  var STEPS = [
+    {
+      act: '第 1 幕 · 情境引入',
+      title: '从司南到磁浮，中间隔着一次「横向」的发现',
+      scene: 'intro',
+      hint: '先看这条时间线：磁被人类用了两千年，才在 1820 年跟电接上',
+      note: '我国春秋战国时期已有磁石记载，指南针在 12 世纪用于航海（教材 P104）。两千年里，磁一直只是"吸铁、指方向"的现象；1820 年奥斯特把电流放到磁针旁边，磁才第一次跟电连成一条线。',
+      controls: [],
+      rail: function () {
+        return [['时间跨度', '战国 → 今天'], ['本课主线', '现象 → 场 → 模型 → 定则'], ['课标', '3.3.1 / 3.3.2']];
+      }
+    },
+    {
+      act: '第 2 幕 · 电和磁的联系',
+      title: '奥斯特为什么总是失败',
+      scene: 'oersted',
+      hint: '切换导线位置：与磁针同一平面 / 抬到上方 / 放到下方 —— 只有后两种，磁针才转',
+      note: '导线与磁针在同一平面时，电流产生的 B 垂直于桌面（竖直），而磁针被支点限制只能水平转 —— 有磁场也转不动。把导线抬到上方或放到下方，B 才有水平分量。奥斯特的困境不是"没有磁场"，而是他一直在"力沿连线"的框框里找，而电流对磁针的作用是横向的（教参 P147）。',
+      controls: [{ t: 'seg', key: 'place', label: '导线位置', opts: [['plane', '同一平面'], ['above', '磁针上方'], ['below', '磁针下方']] }],
+      def: { place: 'plane', dir: 1 },
+      rail: function (st) {
+        var B = oerstedB(st.place, 1);
+        var bh = Math.hypot(B[0], B[2]), bv = Math.abs(B[1]);
+        return [
+          ['B 水平分量', f2(bh), bh < 0.4 ? 'warn' : 'gold'],
+          ['B 竖直分量', f2(bv)],
+          ['磁针偏转', bh < 0.4 ? '0°（转不动）' : '90° 朝东西']
+        ];
+      }
+    },
+    {
+      act: '第 2 幕 · 电和磁的联系',
+      title: '四种情形：一张表，就是安培定则的原始数据',
+      scene: 'oersted',
+      hint: '切换「磁针上方/下方」和「电流方向」，把四种情形都看一遍',
+      note: '教参明确要求做这四种情形，并说这是"为安培定则的教学做好铺垫"。四行数据里藏着一条规律：电流方向反 → 偏转反向；上下互换 → 也反向。所以只要记住一种情形，其余三种都能推出来。',
+      controls: [
+        { t: 'seg', key: 'place', label: '导线位置', opts: [['above', '磁针上方'], ['below', '磁针下方']] },
+        { t: 'seg', key: 'dir', label: '电流', opts: [[1, '北 → 南'], [-1, '南 → 北']] }
+      ],
+      def: { place: 'above', dir: 1 },
+      rail: function (st) {
+        var rows = [
+          ['above', 1, '上方 · 北→南'], ['above', -1, '上方 · 南→北'],
+          ['below', 1, '下方 · 北→南'], ['below', -1, '下方 · 南→北']
+        ];
+        var cur = rows.filter(function (r) { return r[0] === st.place && r[1] === st.dir; })[0];
+        var Bc = oerstedB(st.place, st.dir);
+        return [['本情形', cur[2]], ['N 极偏', dirWord(Bc[0])]];
+      },
+      railHTML: function (st) {
+        var rows = [
+          ['above', 1, '上方 · 北→南'], ['above', -1, '上方 · 南→北'],
+          ['below', 1, '下方 · 北→南'], ['below', -1, '下方 · 南→北']
+        ];
+        var html = '<table class="mini"><tr><th>情形</th><th>N 极偏向</th></tr>';
+        for (var i = 0; i < rows.length; i++) {
+          var B = oerstedB(rows[i][0], rows[i][1]);
+          var on = (st.place === rows[i][0] && st.dir === rows[i][1]) ? ' class="on"' : '';
+          html += '<tr' + on + '><td>' + rows[i][2] + '</td><td>' + dirWord(B[0]) + '</td></tr>';
+        }
+        return html + '</table>';
+      }
+    },
+    {
+      act: '第 3 幕 · 磁场',
+      title: '三类作用，六种搭配，都没有接触',
+      scene: 'actions',
+      hint: '点「通电」和「电流同向」：不接触，力照样出现、还能反向',
+      note: '磁体吸磁体、磁体推通电导线、通电导线推通电导线 —— 共同点是"没有接触却有力的作用"。电荷之间靠电场传力；照这个句式，磁体与磁体、磁体与电流、电流与电流之间，只能是靠磁场传力（教材 P105 原句）。',
+      controls: [
+        { t: 'btn', key: 'power', label: '通电' },
+        { t: 'btn', key: 'same', label: '电流同向' }
+      ],
+      def: { power: false, same: true },
+      rail: function (st) {
+        return [['磁体—磁体', '不接触，有作用'], ['磁体—电流', st.power ? '通电 → 导线被推' : '断电 → 静止'], ['电流—电流', st.same ? '同向：相吸' : '反向：相斥']];
+      }
+    },
+    {
+      act: '第 3 幕 · 磁场',
+      title: '磁场的方向：由小磁针的 N 极说了算',
+      scene: 'fieldDir',
+      hint: '拖动小磁针在磁体周围移动：N 极永远指向该点的 B，也就是磁感线的切线方向',
+      note: '教材的规定：把小磁针静止时 N 极所指的方向规定为该点磁场的方向（P106）。这是"规定"不是推导，目的是与电场方向的规定一致。磁感线的定义就建立在这条规定上：曲线上每一点的切线方向，都跟这点的磁场方向一致。',
+      controls: [],
+      drag: 'needle',
+      dragY: 0.30,
+      dragLimit: 2.8,
+      def: { nx: 2.45, nz: -0.95 },
+      rail: function (st) {
+        var a = 1.15, yc = 0.28;
+        var poles = P.barPoles(a).map(function (q) { return { p: [q.p[0], yc, 0], q: q.q }; });
+        var B = P.polesB([st.nx, yc + 0.02, st.nz], poles);
+        var ref = P.polesB([0, yc, 1.25], poles);
+        return [
+          ['磁针位置', '(' + f1(st.nx) + ', ' + f1(st.nz) + ')'],
+          ['该点 |B|', f2(Math.hypot(B[0], B[1], B[2]) / Math.hypot(ref[0], ref[1], ref[2])) + ' × 侧面'],
+          ['N 极方向', deg(Math.atan2(B[0], -B[2])) + '°']
+        ];
+      }
+    },
+    {
+      act: '第 4 幕 · 磁感线',
+      title: '铁屑排出的图样，就是磁感线的雏形',
+      scene: 'filings',
+      hint: '拖动下方滑块：从「撒铁屑」滑到「画曲线」，看两条路画出同一张图',
+      note: '铁屑在磁场里被磁化成一个个小磁针，轻敲玻璃板后沿磁场方向排队（教材 P106、教参 P148）。沿这些铁屑画出曲线，使每一点的切线方向都跟该点磁场方向一致 —— 这样的曲线就叫磁感线。三要素：沿铁屑画、切线表方向、是曲线。',
+      controls: [{ t: 'range', key: 'morph', label: '铁屑 → 磁感线', min: 0, max: 1, step: 0.02, unit: '', fmt: function (v) { return Math.round(v * 100) + '%'; } }],
+      def: { morph: 0 },
+      rail: function (st) {
+        return [['铁屑', st.morph < 0.5 ? '在排队' : '退场'], ['磁感线', st.morph > 0.5 ? '已画出' : '未画'], ['定义的来源', '实验图样 → 几何曲线']];
+      }
+    },
+    {
+      act: '第 4 幕 · 磁感线',
+      title: '四种常见磁场：形状各不相同，规矩完全一样',
+      scene: 'magnets',
+      hint: '切换四种磁场：条形 / 蹄形 / 同名磁极 / 异名磁极，看磁感线怎么走',
+      note: '四种图共用同一套规矩：线从 N 出、进 S；内部由 S 回 N；两极密、中间疏；不相交、不相切。蹄形磁体两极正对，间隙里的线几乎平行 —— 这就是"匀强磁场"的原型；同名磁极中间出现 B≈0 的中性点（教参 P149）。',
+      controls: [{ t: 'seg', key: 'mag', label: '磁场', opts: [[0, '条形'], [1, '蹄形'], [2, '同名'], [3, '异名']] }],
+      def: { mag: 0 },
+      rail: function (st) {
+        var names = ['条形磁体', '蹄形磁体', '同名磁极', '异名磁极'];
+        var tips = ['两极最密，中间最疏', '间隙内近似匀强', '中间有中性点 B≈0', '间隙里的线最密'];
+        return [['当前', names[st.mag]], ['要点', tips[st.mag]], ['闭合', '外部 N→S，内部 S→N']];
+      }
+    },
+    {
+      act: '第 4 幕 · 磁感线',
+      title: '疏密表示强弱：数一数穿过小圆的线',
+      scene: 'density',
+      hint: '拖动小圆到磁极附近、再拖到侧面：数一数穿过的线，读一读 |B|',
+      note: '教材只说"两极磁感线较密，表示磁场较强"（P106），定量留给 13.2。这里用同一张图做两件事：数穿过小圆的线数、读该点的 |B| 相对值 —— 两者必须同涨同落，模型才算站得住。',
+      controls: [],
+      drag: 'needle',
+      dragY: 0.04,
+      dragLimit: 2.6,
+      def: { nx: 1.62, nz: 0.42 },
+      rail: function (st) {
+        return [
+          ['穿过小圆的线', (st._cnt == null ? '—' : st._cnt + ' 条')],
+          ['该点 |B|', (st._b == null ? '—' : f2(st._b) + ' × 侧面'), 'gold'],
+          ['两极 vs 侧面', '同一张图，疏密差 3 倍以上']
+        ];
+      }
+    },
+    {
+      act: '第 4 幕 · 磁感线',
+      title: '磁感线是闭合的 —— 也是假想的',
+      scene: 'closed',
+      hint: '点「显示内部」：补上磁体内部那一段，磁感线才是完整的一圈',
+      note: '教参明确总结：磁感线在磁体外部从 N 出来、进入 S，在磁体内部由 S 回到 N，形成闭合曲线，且不相交也不相切（P149）。与电场线比三条：都是假想曲线；都用切线表方向、疏密表强弱；但静电场线不闭合，磁感线闭合。',
+      controls: [{ t: 'btn', key: 'inside', label: '显示内部' }],
+      def: { inside: false },
+      rail: function (st) {
+        return [['电场线', '起于正电荷，止于负电荷'], ['磁感线', '无起点终点，闭合'], ['内部方向', st.inside ? 'S → N（已显示）' : '点按钮显示']];
+      },
+      railHTML: function () {
+        return '<table class="mini"><tr><th>项目</th><th>电场线</th><th>磁感线</th></tr>' +
+          '<tr><td>真实存在</td><td>假想</td><td>假想</td></tr>' +
+          '<tr><td>方向/强弱</td><td>切线/疏密</td><td>切线/疏密</td></tr>' +
+          '<tr class="on"><td>是否闭合</td><td>不闭合</td><td>闭合</td></tr></table>';
+      }
+    },
+    {
+      act: '第 5 幕 · 安培定则',
+      title: '直线电流：一圈圈同心圆，圆面垂直于导线',
+      scene: 'wire',
+      hint: '切换「立体 / 俯视 / 正视」：同一个磁场，三种画法要能对上',
+      note: '教参要求画通电直导线的立体图、俯视图和正视图（P149），"为后续学习磁通量奠定基础"。立体图是斜的圆，俯视是正圆，正视被压成一组水平线 —— 三张图说的是同一件事：磁感线是垂直于导线的同心圆。',
+      controls: [
+        { t: 'seg', key: 'view', label: '视角', opts: [['iso', '立体'], ['top', '俯视'], ['front', '正视']] },
+        { t: 'seg', key: 'dir', label: '电流', opts: [[1, '向上'], [-1, '向下']] }
+      ],
+      def: { dir: 1 },
+      rail: function (st) {
+        return [['磁感线形状', '以导线为轴的同心圆'], ['圆面', '垂直于导线'], ['方向', '右手握导线，四指弯向'], ['电流', st.dir > 0 ? '向上 (+y)' : '向下 (−y)']];
+      }
+    },
+    {
+      act: '第 5 幕 · 安培定则',
+      title: '右手握住导线，方向就锁死了',
+      scene: 'ampere',
+      hint: '切换电流方向：拇指一翻，四指的环绕方向立刻跟着反',
+      note: '教材原文：用右手握住导线，让伸直的拇指所指的方向与电流方向一致，弯曲的四指所指的方向就是磁感线环绕的方向（P107）。教参强调"建议不要直接给出右手螺旋定则"，要从四种情形的记录里归纳出来 —— 所以这一步最好让学生先自己比划。',
+      controls: [
+        { t: 'seg', key: 'dir', label: '电流', opts: [[1, '向上'], [-1, '向下']] },
+        { t: 'seg', key: 'view', label: '视角', opts: [['iso', '立体'], ['top', '俯视']] }
+      ],
+      def: { dir: 1 },
+      rail: function (st) {
+        return [['拇指', st.dir > 0 ? '向上（电流）' : '向下（电流）'], ['四指', st.dir > 0 ? '逆着看：顺时针' : '逆着看：逆时针'], ['判据', '四指弯向 = 磁感线方向']];
+      }
+    },
+    {
+      act: '第 5 幕 · 安培定则',
+      title: '把导线弯成环，再一圈圈叠成螺线管',
+      scene: 'coil',
+      hint: '拖动「匝数」滑块 1 → 10：看单匝圆环怎样长成一根螺线管',
+      note: '教参的"微元与累积"：环形电流可看成许多小段直线电流，每一小段用直线电流的定则判定，叠加起来就是环心的磁场方向（P149–P150）。圈数越多，内部的线越并成一根，外部越像一个条形磁体。',
+      controls: [{ t: 'range', key: 'turns', label: '匝数', min: 1, max: 10, step: 1, unit: '匝' }],
+      def: { turns: 1 },
+      rail: function (st) {
+        return [
+          ['匝数 N', st.turns + ' 匝'],
+          ['环心 |B|', (st._ratio == null ? '—' : f2(st._ratio) + ' × 单匝'), 'gold'],
+          ['轴线方向', 'N 极朝上（拇指所指）']
+        ];
+      }
+    },
+    {
+      act: '第 5 幕 · 安培定则',
+      title: '螺线管内部：S → N，整条线才闭合',
+      scene: 'solenoid',
+      hint: '点「对比条形磁体」：螺线管外部的磁场，跟条形磁体一模一样',
+      note: '多个环形电流串联就是通电螺线管（教参 P150）。外部与条形磁体一致，内部由 S 回到 N —— 这正好补上第 9 步"闭合"的另一半证据。教材练习第 6 题问"内部与管口哪里磁场较强"，答案就在这张图里：内部最密。',
+      controls: [{ t: 'btn', key: 'compare', label: '对比条形磁体' }],
+      def: { compare: false },
+      rail: function (st) {
+        return [['内部磁感线', 'S → N（密，强）'], ['外部磁感线', 'N → S（疏，弱）'], ['对比', st.compare ? '已叠加条形磁体' : '未叠加']];
+      }
+    },
+    {
+      act: '第 6 幕 · 反向判断',
+      title: '反过来：已知磁针，判断电流',
+      scene: 'quiz',
+      hint: '点「向上 / 向下」：让磁针真的指北，看看哪种电流才对',
+      note: '教参练习第 4 题的提示：已知电流方向能判断磁场方向，反之，知道磁场方向也要能判断电流方向（P151）。判断时先由磁针 N 极定出该点的 B，再用安培定则反推电流 —— 这两步一步都不能省。',
+      controls: [{ t: 'seg', key: 'ans', label: '电流', opts: [[1, '向上 ⊙'], [-1, '向下 ⊗']] }],
+      def: { ans: -1 },
+      rail: function (st) {
+        var ok = st.ans > 0;
+        return [['你的选择', st.ans > 0 ? '向上' : '向下'], ['判断', ok ? '✓ 正确' : '✗ 再试', ok ? 'gold' : 'warn'], ['目标', '磁针 N 极指向正北']];
+      }
+    },
+    {
+      act: '第 6 幕 · 总结',
+      title: '三句话带走',
+      scene: 'summary',
+      hint: '一条链：磁现象 → 磁场 → 磁感线 → 安培定则',
+      note: '今天只做了一件事：把"磁"从一个现象，变成了一个场，再用线把它画出来，最后用手把方向和电流锁死。下节课把今天画的"疏密"变成公式 —— 那就是磁感应强度 B。',
+      controls: [],
+      rail: function () {
+        return [['观念', '场是物质'], ['模型', '磁感线（假想、闭合）'], ['技能', '安培定则（两套手形）']];
+      }
+    }
+  ];
+
+  global.STEPS = STEPS;
+})(typeof window !== 'undefined' ? window : globalThis);</script>
+<script>
+(function (global) {
+  'use strict';
+  var P = global.PHY, S = global.SCENES, STEPS = global.STEPS, R = global.R3;
+
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+  var state = { i: 0, view: 'iso', ang: 0, live: false, anim: 0 };
+  var W = 1200, H = 720, dirty = true, animUntil = 0;
+
+  function now() { return (global.performance && performance.now) ? performance.now() : Date.now(); }
+
+  function resize() {
+    var box = cv.parentElement.getBoundingClientRect();
+    var dpr = Math.max(1, Math.min(2, global.devicePixelRatio || 1));
+    W = Math.max(300, Math.floor(box.width - 10));
+    H = Math.max(220, Math.floor(box.height - 10));
+    cv.width = Math.floor(W * dpr);
+    cv.height = Math.floor(H * dpr);
+    cv.style.width = W + 'px';
+    cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    dirty = true;
+  }
+
+  function requestDraw(ms) {
+    dirty = true;
+    if (ms) animUntil = Math.max(animUntil, now() + ms);
+  }
+
+  function buildControls(st) {
+    var wrap = document.getElementById('ctrls');
+    wrap.innerHTML = '';
+    (st.controls || []).forEach(function (c) {
+      var box = document.createElement('div');
+      box.className = 'ctl';
+      var lab = document.createElement('label');
+      lab.textContent = c.label || '';
+      box.appendChild(lab);
+      if (c.t === 'seg') {
+        var seg = document.createElement('div');
+        seg.className = 'seg';
+        (c.opts || []).forEach(function (o) {
+          var b = document.createElement('button');
+          b.textContent = o[1];
+          b.dataset.key = c.key; b.dataset.val = String(o[0]);
+          b.onclick = function () {
+            state[c.key] = (typeof o[0] === 'number') ? o[0] : o[0];
+            requestDraw(st.anim ? 700 : 0);
+          };
+          seg.appendChild(b);
+        });
+        box.appendChild(seg);
+      } else if (c.t === 'range') {
+        var inp = document.createElement('input');
+        inp.type = 'range'; inp.min = c.min; inp.max = c.max; inp.step = c.step;
+        inp.dataset.key = c.key;
+        inp.oninput = function () { state[c.key] = parseFloat(this.value); requestDraw(st.anim ? 350 : 0); };
+        box.appendChild(inp);
+        var v = document.createElement('div');
+        v.className = 'v'; v.dataset.val = c.key;
+        box.appendChild(v);
+      } else if (c.t === 'btn') {
+        var b2 = document.createElement('button');
+        b2.className = 'ghost';
+        b2.style.padding = '3px 9px';
+        b2.style.fontSize = '.74rem';
+        b2.textContent = c.label;
+        b2.dataset.key = c.key;
+        b2.onclick = function () { state[c.key] = !state[c.key]; requestDraw(st.anim ? 400 : 0); };
+        box.removeChild(lab);
+        box.appendChild(b2);
+      }
+      wrap.appendChild(box);
+    });
+  }
+
+  function syncControls(st) {
+    var wrap = document.getElementById('ctrls');
+    Array.prototype.forEach.call(wrap.querySelectorAll('.seg button'), function (b) {
+      b.classList.toggle('on', String(state[b.dataset.key]) === b.dataset.val);
+    });
+    Array.prototype.forEach.call(wrap.querySelectorAll('input[type=range]'), function (inp) {
+      var key = inp.dataset.key;
+      if (String(state[key]) !== inp.value) inp.value = state[key];
+      var out = wrap.querySelector('[data-val="' + key + '"]');
+      var c = (st.controls || []).filter(function (x) { return x.key === key; })[0];
+      if (out && c) out.innerHTML = (c.fmt ? c.fmt(state[key]) : state[key]) + '<i>' + (c.unit || '') + '</i>';
+    });
+    Array.prototype.forEach.call(wrap.querySelectorAll('button[data-key]'), function (b) {
+      if (b.parentElement.classList.contains('ctl') && !b.classList.contains('ghost')) return;
+      var key = b.dataset.key;
+      b.classList.toggle('on', !!state[key]);
+      b.style.background = state[key] ? '#3498db' : '#f8fafd';
+      b.style.color = state[key] ? '#fff' : '#546e7a';
+      b.style.borderColor = state[key] ? '#3498db' : '#e0e7ef';
+    });
+  }
+
+  function railKey() {
+    var keys = ['view', 'place', 'dir', 'power', 'same', 'morph', 'turns', 'inside', 'ans', 'nx', 'nz', 'ang', 'live'];
+    var s = state.i + '';
+    for (var i = 0; i < keys.length; i++) s += '|' + state[keys[i]];
+    return s;
+  }
+  var lastRail = '';
+
+  function renderRail(st) {
+    var k = railKey();
+    if (k === lastRail) return;
+    lastRail = k;
+    var rows = (st.rail ? st.rail(state) : []) || [];
+    var html = '';
+    for (var i = 0; i < rows.length; i++) {
+      html += '<div class="row"><span>' + rows[i][0] + '</span><b class="' + (rows[i][2] || '') + '">' + rows[i][1] + '</b></div>';
+    }
+    if (st.railHTML) html += st.railHTML(state);
+    document.getElementById('railbody').innerHTML = html;
+  }
+
+  function draw() {
+    var st = STEPS[state.i];
+    state.live = now() < animUntil;
+    ctx.clearRect(0, 0, W, H);
+    (S[st.scene] || S.intro)(ctx, W, H, state);
+    document.getElementById('actName').textContent = st.act;
+    document.getElementById('stepTitle').textContent = st.title;
+    document.getElementById('cnt').textContent = (state.i + 1) + ' / ' + STEPS.length;
+    document.getElementById('hint').textContent = st.hint;
+    document.getElementById('note').innerHTML = st.note;
+    renderRail(st);
+    syncControls(st);
+    markNav();
+    dirty = false;
+  }
+
+  function loop() {
+    if (dirty || now() < animUntil) draw();
+    global.requestAnimationFrame(loop);
+  }
+
+  function applyStep() {
+    var st = STEPS[state.i];
+    state.view = 'iso';
+    state.live = false;
+    state.ang = 0;
+    Object.keys(st.def || {}).forEach(function (k) { state[k] = st.def[k]; });
+    if (st.init) st.init(state);
+    lastRail = '';
+    dirty = true;
+    buildControls(st);
+    document.getElementById('note').innerHTML = st.note;
+    setTimeout(function () { resize(); requestDraw(0); }, 0);
+  }
+
+  function go(d) {
+    var n = Math.max(0, Math.min(STEPS.length - 1, state.i + d));
+    if (n === state.i) return;
+    state.i = n;
+    applyStep();
+  }
+
+  var navBuilt = false;
+  function buildNav() {
+    var wrap = document.getElementById('toc');
+    wrap.innerHTML = '';
+    var lastAct = '';
+    STEPS.forEach(function (s, i) {
+      if (s.act !== lastAct) {
+        if (i) { var g = document.createElement('span'); g.className = 'gap'; wrap.appendChild(g); }
+        lastAct = s.act;
+      }
+      var b = document.createElement('button');
+      b.textContent = String(i + 1);
+      b.title = s.act + ' · ' + s.title;
+      b.dataset.i = i;
+      b.onclick = function () { state.i = i; applyStep(); };
+      wrap.appendChild(b);
+    });
+    navBuilt = true;
+  }
+  function markNav() {
+    var wrap = document.getElementById('toc');
+    Array.prototype.forEach.call(wrap.querySelectorAll('button'), function (b) {
+      b.classList.toggle('on', +b.dataset.i === state.i);
+    });
+  }
+
+  function toPlane(sx, sy, y0) {
+    var c = R3.cam;
+    var A = Math.cos(c.yaw), B = Math.sin(c.yaw), C = Math.cos(c.pitch), Sn = Math.sin(c.pitch);
+    if (Math.abs(Sn) < 1e-3) return null;
+    var u = (sx - c.cx) / c.s, v = (c.cy - sy) / c.s;
+    var W1 = (y0 * C - v) / Sn;
+    return [A * u - B * W1, B * u + A * W1];
+  }
+
+  var dragging = false;
+  cv.addEventListener('pointerdown', function (e) {
+    var st = STEPS[state.i];
+    if (!st.drag) return;
+    var r = cv.getBoundingClientRect();
+    var p = toPlane(e.clientX - r.left, e.clientY - r.top, st.dragY == null ? 0.3 : st.dragY);
+    if (!p) return;
+    dragging = true;
+    cv.classList.add('grabbing');
+    cv.setPointerCapture(e.pointerId);
+    moveNeedle(p, st);
+  });
+  cv.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var st = STEPS[state.i];
+    var r = cv.getBoundingClientRect();
+    var p = toPlane(e.clientX - r.left, e.clientY - r.top, st.dragY == null ? 0.3 : st.dragY);
+    if (!p) return;
+    moveNeedle(p, st);
+  });
+  function moveNeedle(p, st) {
+    var lim = st.dragLimit || 2.6;
+    state.nx = Math.max(-lim, Math.min(lim, p[0]));
+    state.nz = Math.max(-lim, Math.min(lim, p[1]));
+    requestDraw(0);
+  }
+  cv.addEventListener('pointerup', function () { dragging = false; cv.classList.remove('grabbing'); });
+  cv.addEventListener('pointercancel', function () { dragging = false; cv.classList.remove('grabbing'); });
+
+  global.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+  });
+
+  document.getElementById('btnNext').onclick = function () { go(1); };
+  document.getElementById('btnPrev').onclick = function () { go(-1); };
+  global.addEventListener('resize', function () { resize(); requestDraw(0); });
+
+  buildNav();
+  applyStep();
+  resize();
+  draw();
+  loop();
+
+  global.__viz = {
+    selfTest: function () {
+      var r = P.runSelfTest();
+      r.rendered = { w: W, h: H, step: state.i };
+      return r;
+    },
+    goto: function (i) { state.i = i; applyStep(); draw(); },
+    settle: function () { animUntil = 0; state.live = false; dirty = true; draw(); },
+    state: function () { return { i: state.i, w: W, h: H, view: state.view, keys: Object.keys(state) }; },
+    allow: function (i) {
+      var s = STEPS[i == null ? state.i : i];
+      var keys = (s.controls || []).map(function (c) { return c.key; });
+      if (s.drag) keys.push('drag:' + s.drag);
+      return keys;
+    },
+    steps: function () { return STEPS.map(function (s) { return { act: s.act, title: s.title, hint: s.hint, keys: (s.controls || []).map(function (c) { return c.key; }) }; }); },
+    hash: function () {
+      var d = ctx.getImageData(0, 0, cv.width, cv.height).data;
+      var h = 2166136261;
+      for (var i = 0; i < d.length; i += 97) { h ^= d[i]; h = (h * 16777619) >>> 0; }
+      return h.toString(16);
+    }
+  };
+})(typeof window !== 'undefined' ? window : globalThis);</script>
+</body>
+</html>
